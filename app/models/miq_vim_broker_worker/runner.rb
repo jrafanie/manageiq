@@ -141,6 +141,7 @@ class MiqVimBrokerWorker::Runner < MiqWorker::Runner
   end
 
   def do_heartbeat_work
+    super
     t = Benchmark.realtime { check_broker_server }
     _log.warn("#{log_prefix} Elapsed time for [check_broker_server] was #{t} seconds") if t > 30
     log_status

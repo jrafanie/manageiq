@@ -316,6 +316,30 @@ class MiqWorker::Runner
     _log.info("#{log_prefix} Starting work since worker monitor has started")
   end
 
+  def log_object_space
+    require 'objspace'
+    object_hash = {}
+
+    ObjectSpace.each_object do |o|
+      # Skip objects created outside of the block
+      # next unless ObjectSpace.allocation_sourcefile(o)
+      # next if ObjectSpace.allocation_method_id(o) == "log_object_space".freeze
+
+      # key = "#{ObjectSpace.allocation_sourcefile(o)}:#{ObjectSpace.allocation_sourceline(o)}"
+      key = o.class.name
+      object_hash[key] ||= Hash.new { |h, _| h[:count] = 0; h[:memsize] = 0 }
+      object_hash[key][:count] += 1
+      object_hash[key][:memsize] += ObjectSpace.memsize_of(o)
+    end
+
+    object_hash.sort_by {|k, v| -v[:memsize]}[0..50].each do |k, v|
+      $log.info "m: %11s | c: %7s | %s" %
+      [v[:memsize].to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,"),
+       v[:count].to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,"),
+      k ]
+    end
+  end
+
   def do_work_loop
     loop do
       begin
@@ -366,6 +390,7 @@ class MiqWorker::Runner
   # For derived classes to override, if they need to
   #
   def do_heartbeat_work
+    log_object_space
   end
 
   def do_before_work_loop
