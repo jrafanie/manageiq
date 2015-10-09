@@ -1,11 +1,13 @@
 require 'miq-process'
 require 'thread'
+require 'ruby_gc_logger'
 
 class MiqWorker::Runner
   class TemporaryFailure < RuntimeError
   end
 
   include Vmdb::Logging
+  include RubyGCLogger
   attr_accessor :last_hb, :worker, :worker_settings
   attr_reader   :vmdb_config, :active_roles, :server
 
@@ -53,6 +55,8 @@ class MiqWorker::Runner
     @cfg[:guid] ||= ENV['MIQ_GUID']
 
     $log ||= Rails.logger
+
+    _log.info("gc_statistics_file: #{start_gc_statistics_thread(5)}")
 
     @server = MiqServer.my_server(true)
 
@@ -371,7 +375,7 @@ class MiqWorker::Runner
     interval = 1.minute if interval < 1.minute
     if @last_gc.nil? || @last_gc + interval < t
       gc_time = Benchmark.realtime { ObjectSpace.garbage_collect }
-      gc_meth = gc_time >= 5 ? :warn : :debug
+      gc_meth = gc_time >= 5 ? :warn : :info
       $log.send(gc_meth, "#{log_prefix} Garbage collection took #{gc_time} seconds")
       @last_gc = t
     end

@@ -1,7 +1,10 @@
 require 'miq-process'
 require 'pid_file'
+require 'ruby_gc_logger'
 
 class EvmServer
+  include RubyGCLogger
+
   SOFT_INTERRUPT_SIGNALS = ["SIGTERM", "SIGUSR1", "SIGUSR2"]
 
   OPTIONS_PARSER_SETTINGS = [
@@ -12,6 +15,8 @@ class EvmServer
     @cfg = cfg
 
     $log ||= Rails.logger
+
+    $log.info("gc_statistics_file: #{start_gc_statistics_thread(5)}")
   end
 
   def process_hard_signal(s)
