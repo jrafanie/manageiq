@@ -320,6 +320,9 @@ class MiqWorker::Runner
     require 'objspace'
     object_hash = {}
 
+    _log.info "GC.stat: #{GC.stat.to_json}"
+    _log.info "GC.count_objects: #{ObjectSpace.count_objects.to_json}"
+
     ObjectSpace.each_object do |o|
       # Skip objects created outside of the block
       # next unless ObjectSpace.allocation_sourcefile(o)
@@ -333,7 +336,7 @@ class MiqWorker::Runner
     end
 
     object_hash.sort_by {|k, v| -v[:memsize]}[0..50].each do |k, v|
-      $log.info "m: %11s | c: %7s | %s" %
+      _log.info "m: %11s | c: %7s | %s" %
       [v[:memsize].to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,"),
        v[:count].to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,"),
       k ]
