@@ -387,7 +387,7 @@ class MiqWorker::Runner
     interval = 1.minute if interval < 1.minute
     if @last_gc.nil? || @last_gc + interval < t
       gc_time = Benchmark.realtime { ObjectSpace.garbage_collect }
-      gc_meth = gc_time >= 5 ? :warn : :debug
+      gc_meth = gc_time >= 5 ? :warn : :info
       $log.send(gc_meth, "#{log_prefix} Garbage collection took #{gc_time} seconds")
       @last_gc = t
     end
