@@ -1,8 +1,10 @@
 require 'miq-process'
 require 'thread'
+require 'ruby_gc_logger'
 
 class MiqWorker::Runner
   include Vmdb::Logging
+  include RubyGCLogger
   attr_accessor :last_hb, :worker, :worker_settings
   attr_reader   :vmdb_config, :active_roles, :server
 
@@ -131,6 +133,8 @@ class MiqWorker::Runner
   end
 
   def prepare
+    _log.info("gc_statistics_file: #{start_gc_statistics_thread(10)}")
+
     ObjectSpace.garbage_collect
     started_worker_record
     do_wait_for_worker_monitor if self.class.wait_for_worker_monitor?
@@ -393,7 +397,6 @@ class MiqWorker::Runner
   # For derived classes to override, if they need to
   #
   def do_heartbeat_work
-    log_object_space
   end
 
   def do_before_work_loop
