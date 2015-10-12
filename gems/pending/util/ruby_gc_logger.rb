@@ -21,6 +21,7 @@ module RubyGCLogger
 
   def gc_stat_line
     [Time.now.iso8601] +
+      MiqProcess.processInfo.values_at(*miq_process_keys) +
       GC.stat.values_at(*gc_stat_keys) +
       [ObjectSpace.memsize_of_all] +
       ObjectSpace.count_objects.values_at(*count_objects_keys) +
@@ -29,6 +30,7 @@ module RubyGCLogger
 
   def gc_stat_header
     [:time] +
+      miq_process_keys +
       gc_stat_keys +
       [:memsize_of_all] +
       count_objects_keys +
@@ -37,6 +39,10 @@ module RubyGCLogger
 
   def gc_stat_keys
     @gc_stat_keys ||= GC.stat.keys
+  end
+
+  def miq_process_keys
+    @miq_process_keys ||= [:memory_usage, :memory_size]
   end
 
   def count_objects_keys
