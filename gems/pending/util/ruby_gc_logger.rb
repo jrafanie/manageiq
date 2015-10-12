@@ -3,9 +3,9 @@ module RubyGCLogger
     require 'tempfile'
     require 'objspace'
     prefix   = self.class.name
-    prefix   = prefix.deconstantize if prefix.include?("::")
+    prefix   = prefix.deconstantize.underscore.gsub("/", "-") if prefix.include?("::")
     # Make a time based filename
-    csv      = File.open(prefix.underscore, "a+")
+    csv      = File.open(Rails.root.join("log", "#{prefix.underscore}.csv"), "w+")
     Thread.new do
       csv.puts(gc_stat_header.join(","))
       loop do
