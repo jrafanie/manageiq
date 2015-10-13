@@ -75,8 +75,25 @@ module ::ManageIQ::Providers
 
       def refresh_targets_for_ems(targets)
         targets_with_data, = Benchmark.realtime_block(:get_vc_data_total) { get_and_filter_vc_data(targets) }
+        @vc_data = nil # We no longer need the raw data, so remove the references to it for GC
+        log_header = "EMS: [#{@ems.name}], id: [#{@ems.id}]"
         start_time = Time.now
-        targets_with_data.each { |t, d| refresh_target(t, d) }
+        targets_with_data.keys.each do |target|
+          _log.info "#{log_header} Refreshing target #{target.class} [#{target.name}] id [#{target.id}]..."
+
+          data = targets_with_data[target]
+          hashes = parse_target(target, data)
+          targets_with_data[target] = data = nil # We no longer need the raw data, so remove the references to it for GC
+
+# GC.start
+# log_object_space
+# puts ObjectSpace.dump_all.path
+
+          save_target(target, hashes)
+
+          _log.info "#{log_header} Refreshing target #{target.class} [#{target.name}] id [#{target.id}]...Complete"
+        end
+
         Benchmark.realtime_block(:post_refresh_ems) { post_refresh_ems(start_time) }
       end
 
@@ -88,10 +105,10 @@ module ::ManageIQ::Providers
 
         # Filter the data, and determine for which hosts we will need to get extended data
         filtered_host_mors = []
-        targets_with_data = targets.collect do |target|
+        targets_with_data = targets.each_with_object({}) do |target, h|
           filtered_data, = Benchmark.realtime_block(:filter_vc_data) { filter_vc_data(target) }
           filtered_host_mors += filtered_data[:host].keys
-          [target, filtered_data]
+          h[target] = filtered_data
         end
         filtered_host_mors.uniq!
 
@@ -102,22 +119,22 @@ module ::ManageIQ::Providers
         disconnect_from_ems
       end
 
-      def refresh_target(target, filtered_data)
+      def parse_target(target, filtered_data)
         log_header = "EMS: [#{@ems.name}], id: [#{@ems.id}]"
-        _log.info "#{log_header} Refreshing target #{target.class} [#{target.name}] id [#{target.id}]..."
-
         _log.debug "#{log_header} Parsing VC inventory..."
         hashes, = Benchmark.realtime_block(:parse_vc_data) do
           RefreshParser.ems_inv_to_hashes(filtered_data)
         end
         _log.debug "#{log_header} Parsing VC inventory...Complete"
 
+        hashes
+      end
+
+      def save_target(target, hashes)
         Benchmark.realtime_block(:db_save_inventory) do
           @ems.update_attributes(@ems_data) unless @ems_data.nil?
           EmsRefresh.save_ems_inventory(@ems, hashes, target)
         end
-
-        _log.info "#{log_header} Refreshing target #{target.class} [#{target.name}] id [#{target.id}]...Complete"
       end
 
       def post_refresh_ems(start_time)
