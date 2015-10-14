@@ -6,12 +6,13 @@ module VimConnectMixin
     options[:fault_tolerant] = true unless options.key?(:fault_tolerant)
 
     options[:use_broker] = (self.class.respond_to?(:use_vim_broker?) ? self.class.use_vim_broker? : ManageIQ::Providers::Vmware::InfraManager.use_vim_broker?) if options[:fault_tolerant] && !options.key?(:use_broker)
-    options[:check_broker_worker] = !!options[:use_broker] unless options.key?(:check_broker_worker)
-    if options[:check_broker_worker] && !MiqVimBrokerWorker.available?
-      msg = "Broker Worker is not available"
-      _log.error(msg)
-      raise MiqException::MiqVimBrokerUnavailable, msg
-    end
+    # options[:check_broker_worker] = !!options[:use_broker] unless options.key?(:check_broker_worker)
+    # if options[:check_broker_worker] && !MiqVimBrokerWorker.available?
+    #   msg = "Broker Worker is not available"
+    #   _log.error(msg)
+    #   raise MiqException::MiqVimBrokerUnavailable, msg
+    # end
+    options[:vim_broker_drb_port] = 9001
     options[:vim_broker_drb_port] ||= MiqVimBrokerWorker.method(:drb_port) if options[:use_broker]
 
     # The following require pulls in both MiqFaultTolerantVim and MiqVim

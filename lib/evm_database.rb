@@ -16,7 +16,6 @@ class EvmDatabase
     MiqReport
     RssFeed
     MiqWidget
-    VmdbDatabase
   )
 
   RAILS_ENGINE_MODEL_CLASS_NAMES = %w(MiqAeDatastore)
