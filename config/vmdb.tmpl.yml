@@ -124,7 +124,7 @@ log:
   level_rhevm_in_evm: error
   level_scvmm: info
   level_scvmm_in_evm: error
-  level_vim: warn
+  level_vim: info
   level_vim_in_evm: error
   path:
 log_depot:
