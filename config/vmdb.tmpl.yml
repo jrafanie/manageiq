@@ -193,7 +193,7 @@ server:
   name: EVM
   rails_server: "thin"
   remote_console_type: VMRC
-  role: database_operations,event,reporting,scheduler,smartstate,ems_operations,ems_inventory,user_interface,web_services,automate
+  role: database_operations,event,scheduler,ems_operations,ems_inventory,user_interface,automate
   server_dequeue_frequency: 5.seconds
   session_store: cache
   startup_timeout: 300
@@ -264,7 +264,7 @@ workers:
       :gc_interval: 15.minutes
       :heartbeat_freq: 60.seconds
       :heartbeat_timeout: 2.minutes
-      :memory_threshold: 200.megabytes
+      :memory_threshold: 1000.megabytes
       :nice_delta: 10
       :parent_time_threshold: 3.minutes
       :poll: 3.seconds
@@ -274,7 +274,7 @@ workers:
       :starting_timeout: 10.minutes
     :ems_refresh_core_worker:
       :poll: 1.seconds
-      :memory_threshold: 400.megabytes
+      :memory_threshold: 1000.megabytes
       :nice_delta: 1
       :thread_shutdown_timeout: 10.seconds
     :event_catcher:
@@ -320,12 +320,12 @@ workers:
       :defaults:
         :cpu_usage_threshold: 100.percent
         :dequeue_method: :drb
-        :memory_threshold: 400.megabytes
+        :memory_threshold: 1000.megabytes
         :poll_method: :normal
         :queue_timeout: 10.minutes
       :ems_metrics_collector_worker:
         :defaults:
-          :count: 2
+          :count: 1
           :nice_delta: 3
           :poll_method: :escalate
         :ems_metrics_collector_worker_amazon:
@@ -343,8 +343,8 @@ workers:
         :ems_metrics_collector_worker_openshift:
           :poll_method: :escalate
       :ems_metrics_processor_worker:
-        :count: 2
-        :memory_threshold: 400.megabytes
+        :count: 1
+        :memory_threshold: 1000.megabytes
         :nice_delta: 7
         :poll_method: :escalate
       :ems_refresh_worker:
@@ -370,9 +370,9 @@ workers:
         :cpu_usage_threshold: 0.percent
         :nice_delta: 7
       :generic_worker:
-        :count: 2
+        :count: 1
       :automate_worker:
-        :count: 2
+        :count: 1
       :netapp_refresh_worker:
         :memory_threshold: 2.gigabytes
         :nice_delta: 7
@@ -380,19 +380,19 @@ workers:
         :poll_method: :normal
         :queue_timeout: 60.minutes
       :priority_worker:
-        :count: 2
+        :count: 1
         :nice_delta: 1
         :poll: 1.seconds
       :reporting_worker:
-        :count: 2
+        :count: 1
         :nice_delta: 7
       :smart_proxy_worker:
-        :count: 2
-        :memory_threshold: 600.megabytes
+        :count: 1
+        :memory_threshold: 1000.megabytes
         :queue_timeout: 20.minutes
         :restart_interval: 2.hours
       :storage_metrics_collector_worker:
-        :count: 2
+        :count: 1
         :nice_delta: 3
         :poll_method: :escalate
       :vmdb_storage_bridge_worker:
@@ -513,7 +513,7 @@ workers:
       :job_timeout_interval: 60.seconds
       :log_active_configuration_interval: 1.days
       :log_database_statistics_interval: 1.days
-      :memory_threshold: 250.megabytes
+      :memory_threshold: 1000.megabytes
       :nice_delta: 3
       :orchestration_stack_retired_interval: 10.minutes
       :performance_collection_interval: 3.minutes
