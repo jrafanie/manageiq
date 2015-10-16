@@ -110,7 +110,7 @@ log:
       - VERSION
     :ping_depot: true
     :ping_depot_timeout: 20
-  level: info
+  level: debug
   level_rails: info
   level_aws: info
   level_aws_in_evm: error
