@@ -1,16 +1,16 @@
-module RubyGCLogger
+require 'singleton'
+class RubyGCLogger
+  include Singleton
+
   def start_gc_statistics_thread(seconds = 60)
-    require 'tempfile'
     require 'objspace'
     require 'miq-process'
 
-    prefix   = self.class.name
-    prefix   = prefix.deconstantize.underscore.gsub("/", "-") if prefix.include?("::")
     # Make a time based filename
-    csv      = File.open(Rails.root.join("log", "#{prefix.underscore}_#{Process.pid}.csv"), "w+")
+    csv      = File.open(Rails.root.join("log", "#{Process.pid}.csv"), "w+")
     csv.sync = true
     # Thread.abort_on_exception = true
-    Thread.new do
+    @gc_stat_thread = Thread.new do
       csv.puts(gc_stat_header.join(",".freeze))
       loop do
         csv.puts(gc_stat_line.join(",".freeze))
@@ -20,6 +20,15 @@ module RubyGCLogger
 
     at_exit { csv.close }
     csv.path
+  end
+
+  def self.gc_stat_now
+    instance.gc_stat_now
+  end
+
+  def gc_stat_now
+    @gc_stat_thread.wakeup
+    Thread.pass
   end
 
   private

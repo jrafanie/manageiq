@@ -7,7 +7,6 @@ class MiqWorker::Runner
   end
 
   include Vmdb::Logging
-  include RubyGCLogger
   attr_accessor :last_hb, :worker, :worker_settings
   attr_reader   :vmdb_config, :active_roles, :server
 
@@ -56,7 +55,7 @@ class MiqWorker::Runner
 
     $log ||= Rails.logger
 
-    _log.info("gc_statistics_file: #{start_gc_statistics_thread(5)}")
+    _log.info("gc_statistics_file: #{RubyGCLogger.instance.start_gc_statistics_thread(5)}")
 
     @server = MiqServer.my_server(true)
 
