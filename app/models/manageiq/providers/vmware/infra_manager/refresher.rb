@@ -95,6 +95,7 @@ module ManageIQ::Providers
           _log.info "#{log_header} Refreshing target #{target.class} [#{target.name}] id [#{target.id}]...Complete"
         end
 
+        GC.start
         Benchmark.realtime_block(:post_refresh_ems) { post_refresh_ems(start_time) }
       end
 

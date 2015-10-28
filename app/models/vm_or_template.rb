@@ -1157,6 +1157,9 @@ class VmOrTemplate < ActiveRecord::Base
     ems = ExtManagementSystem.find(ems_id)
 
     # Collect the newly added VMs
+    root = ems.ems_folder_root
+
+    # VmOrTemplate.where(:id => root.vms_and_templates_ids).where("created_on >= ?", update_start_time)
     added_vms = ems.vms_and_templates.where("created_on >= ?", update_start_time)
 
     # Create queue items to do additional process like apply tags and link events
@@ -1171,22 +1174,68 @@ class VmOrTemplate < ActiveRecord::Base
     end
 
     # Collect the updated folder relationships to determine which vms need updated path information
-    ems_folders = ems.ems_folders
-    MiqPreloader.preload(ems_folders, :all_relationships)
+    MiqPreloader.preload(root, :all_relationships)
+    tree = root.descendants_arranged
+    prune_unchanged_folders(tree, update_start_time)
 
-    updated_folders = ems_folders.select do |f|
-      f.created_on >= update_start_time || f.updated_on >= update_start_time || # Has the folder itself changed (e.g. renamed)?
-      f.relationships.any? do |r|                                                  # Or has its relationship rows changed?
-        r.created_at >= update_start_time || r.updated_at >= update_start_time || #   Has the direct relationship changed (e.g. this folder moved under another folder)?
-        r.children.any? do |child_r|                                             #   Or have any of the child relationship rows changed (e.g. vm moved under this folder)?
-          child_r.created_at >= update_start_time || child_r.updated_at >= update_start_time
-        end
+    updated_vms = extract_vms(tree).uniq - added_vms
+    updated_vms.each(&:classify_with_parent_folder_path_queue)
+  end
+
+  # def self.do_it(update_start_time)
+  #   ems = ExtManagementSystem.first
+  #   tree = ems.ems_folder_root.descendants_arranged
+  #   prune_unchanged_folders(tree, update_start_time)
+  #   extract_vms(tree)
+  # end
+
+  def self.extract_vms(tree)
+    tree.flat_map do |object, children|
+      child_vms = extract_vms(children)
+      child_vms.unshift(object) if object.kind_of?(VmOrTemplate)
+      child_vms
+    end
+  end
+
+  def self.prune_unchanged_folders(tree, update_start_time, parent = nil)
+    tree.reject! do |object, children|
+      prune_unchanged_folders(children, update_start_time, object)
+      result = object.kind_of?(EmsFolder) &&
+        (
+          !object_changed?(object, update_start_time) &&
+          object.relationships.none? { |r| relationship_changed?(r, update_start_time) }
+        )
+      result
+    end
+  end
+
+  def self.object_changed?(object, update_start_time)
+    # print "#{object.class.name.demodulize}:#{object.id}"
+    # print " update_start_time: #{update_start_time}"
+    # print " created_on: #{object.created_on}"
+    # print " updated_on: #{object.updated_on}"
+    result = object.created_on >= update_start_time || object.updated_on >= update_start_time
+    # print " result: #{result}\n"
+    result
+  end
+
+  def self.relationship_changed?(rel, update_start_time)
+    # print "#{rel.class.name.demodulize}:#{rel.id}"
+    # print " update_start_time: #{update_start_time}"
+    # print " created_at: #{rel.created_at}"
+    # print " updated_at: #{rel.updated_at}"
+    result = rel.created_at >= update_start_time || rel.updated_at >= update_start_time
+    # print " result: #{result}\n"
+    result ||
+      rel.children.any? do |child_r|
+        # print "#{rel.class.name.demodulize}:#{rel.id}, #{child_r.class.name.demodulize}:#{child_r.id}"
+        # print " update_start_time: #{update_start_time}"
+        # print " created_at: #{child_r.created_at}"
+        # print " updated_at: #{child_r.updated_at}"
+        result = child_r.created_at >= update_start_time || child_r.updated_at >= update_start_time
+        # print " result: #{result}\n"
+        result
       end
-    end
-    unless updated_folders.empty?
-      updated_vms = updated_folders.collect(&:all_vms_and_templates).flatten.uniq - added_vms
-      updated_vms.each(&:classify_with_parent_folder_path_queue)
-    end
   end
 
   def self.assign_ems_created_on_queue(vm_ids)
