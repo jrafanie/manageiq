@@ -1159,7 +1159,6 @@ class VmOrTemplate < ActiveRecord::Base
     # Collect the newly added VMs
     root = ems.ems_folder_root
 
-    # VmOrTemplate.where(:id => root.vms_and_templates_ids).where("created_on >= ?", update_start_time)
     added_vms = ems.vms_and_templates.where("created_on >= ?", update_start_time)
 
     # Create queue items to do additional process like apply tags and link events
@@ -1182,13 +1181,6 @@ class VmOrTemplate < ActiveRecord::Base
     updated_vms.each(&:classify_with_parent_folder_path_queue)
   end
 
-  # def self.do_it(update_start_time)
-  #   ems = ExtManagementSystem.first
-  #   tree = ems.ems_folder_root.descendants_arranged
-  #   prune_unchanged_folders(tree, update_start_time)
-  #   extract_vms(tree)
-  # end
-
   def self.extract_vms(tree, vm_set = Set.new)
     tree.each do |object, children|
       extract_vms(children, vm_set)
@@ -1200,42 +1192,22 @@ class VmOrTemplate < ActiveRecord::Base
   def self.prune_unchanged_folders(tree, update_start_time, parent = nil)
     tree.reject! do |object, children|
       child_pruned = prune_unchanged_folders(children, update_start_time, object)
-      unchanged_folder = object.kind_of?(EmsFolder) &&
+      unchanged_folder =
+        object.kind_of?(EmsFolder) &&
         !object_changed?(object, update_start_time) &&
         object.relationships.none? { |r| relationship_changed?(r, update_start_time) }
-      result = unchanged_folder && (children.empty? || child_pruned)
-
-      # print "#{object.class.name.demodulize}: #{object.name}, Pruning? #{result}, children.empty? #{children.empty?} child_pruned: #{child_pruned.inspect}, unchanged_folder: #{unchanged_folder.inspect} \n\n"
-      result
+      unchanged_folder && (children.empty? || child_pruned)
     end
   end
 
   def self.object_changed?(object, update_start_time)
-    # print "#{object.class.name.demodulize}:#{object.name}"
-    # print " update_start_time: #{update_start_time}"
-    # print " created_on: #{object.created_on}"
-    # print " updated_on: #{object.updated_on}"
-    result = object.created_on >= update_start_time || object.updated_on >= update_start_time
-    # print " result: #{result}\n"
-    result
+    object.created_on >= update_start_time || object.updated_on >= update_start_time
   end
 
   def self.relationship_changed?(rel, update_start_time)
-    # print "#{rel.class.name.demodulize}:#{rel.id}"
-    # print " update_start_time: #{update_start_time}"
-    # print " created_at: #{rel.created_at}"
-    # print " updated_at: #{rel.updated_at}"
-    result = rel.created_at >= update_start_time || rel.updated_at >= update_start_time
-    # print " result: #{result}\n"
-    result ||
+    rel.created_at >= update_start_time || rel.updated_at >= update_start_time ||
       rel.children.any? do |child_r|
-        # print "#{rel.class.name.demodulize}:#{rel.id}, #{child_r.class.name.demodulize}:#{child_r.id}"
-        # print " update_start_time: #{update_start_time}"
-        # print " created_at: #{child_r.created_at}"
-        # print " updated_at: #{child_r.updated_at}"
-        result = child_r.created_at >= update_start_time || child_r.updated_at >= update_start_time
-        # print " result: #{result}\n"
-        result
+        child_r.created_at >= update_start_time || child_r.updated_at >= update_start_time
       end
   end
 
