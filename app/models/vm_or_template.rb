@@ -1280,9 +1280,9 @@ class VmOrTemplate < ActiveRecord::Base
 
   def post_create_actions_queue
     MiqQueue.put(
-      :class_name  => self.class.name,
+      :class_name  => 'VmOrTemplate'.freeze,
       :instance_id => id,
-      :method_name => 'post_create_actions'
+      :method_name => 'post_create_actions'.freeze
     )
   end
 
