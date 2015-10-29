@@ -1199,18 +1199,19 @@ class VmOrTemplate < ActiveRecord::Base
 
   def self.prune_unchanged_folders(tree, update_start_time, parent = nil)
     tree.reject! do |object, children|
-      prune_unchanged_folders(children, update_start_time, object)
-      result = object.kind_of?(EmsFolder) &&
-        (
-          !object_changed?(object, update_start_time) &&
-          object.relationships.none? { |r| relationship_changed?(r, update_start_time) }
-        )
+      child_pruned = prune_unchanged_folders(children, update_start_time, object)
+      unchanged_folder = object.kind_of?(EmsFolder) &&
+        !object_changed?(object, update_start_time) &&
+        object.relationships.none? { |r| relationship_changed?(r, update_start_time) }
+      result = unchanged_folder && (children.empty? || child_pruned)
+
+      # print "#{object.class.name.demodulize}: #{object.name}, Pruning? #{result}, children.empty? #{children.empty?} child_pruned: #{child_pruned.inspect}, unchanged_folder: #{unchanged_folder.inspect} \n\n"
       result
     end
   end
 
   def self.object_changed?(object, update_start_time)
-    # print "#{object.class.name.demodulize}:#{object.id}"
+    # print "#{object.class.name.demodulize}:#{object.name}"
     # print " update_start_time: #{update_start_time}"
     # print " created_on: #{object.created_on}"
     # print " updated_on: #{object.updated_on}"

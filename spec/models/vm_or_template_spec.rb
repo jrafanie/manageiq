@@ -1,6 +1,106 @@
 require "spec_helper"
 
 describe VmOrTemplate do
+  context ".extract_vms" do
+    before do
+      #    fa
+      # fb
+      @ems      = FactoryGirl.create(:ems_vmware, :zone => FactoryGirl.create(:zone))
+      @folder_a = FactoryGirl.create(:ems_folder, :name => "fa")
+      @folder_b = FactoryGirl.create(:ems_folder, :name => "fb")
+      @ems.add_child(@folder_a)
+      @folder_a.add_child(@folder_b)
+      @root = @ems.ems_folder_root
+    end
+
+    it "one vm in leaf folder" do
+      #       fa
+      #    fb
+      # vb
+      vm = FactoryGirl.create(:vm_vmware, :name => "vb")
+      @folder_b.add_child(vm)
+
+      vms = described_class.extract_vms(@root.descendants_arranged)
+      expect(vms.collect(&:name)).to eql [vm.name]
+    end
+
+    it "same vm in two folders" do
+      #        fa
+      #     fb    fc
+      # vbc          vbc
+      @folder_c = FactoryGirl.create(:ems_folder, :name => "fc")
+      @folder_a.add_child(@folder_c)
+      vm = FactoryGirl.create(:vm_vmware, :name => "vbc")
+      @folder_b.add_child(vm)
+      @folder_c.add_child(vm)
+
+      vms = described_class.extract_vms(@root.descendants_arranged)
+      expect(vms.collect(&:name)).to eql([vm.name, vm.name])
+      expect(vms[0].object_id).to eql vms[1].object_id
+    end
+  end
+
+  context ".prune_unchanged_folders" do
+    before do
+      #       fa
+      #    fb     fc
+      # fd
+      @ems      = FactoryGirl.create(:ems_vmware, :zone => FactoryGirl.create(:zone))
+      @folder_a = FactoryGirl.create(:ems_folder, :name => "fa")
+      @folder_b = FactoryGirl.create(:ems_folder, :name => "fb")
+      @folder_c = FactoryGirl.create(:ems_folder, :name => "fc")
+      @folder_d = FactoryGirl.create(:ems_folder, :name => "fd")
+      @ems.add_child(@folder_a)
+      @folder_a.add_child(@folder_b)
+      @folder_a.add_child(@folder_c)
+      @folder_b.add_child(@folder_d)
+      @start = Time.now.utc
+      @root = @ems.ems_folder_root
+    end
+
+    let(:tree) { @root.descendants_arranged }
+
+    it "modify leaf c" do
+      @folder_c.touch
+      described_class.prune_unchanged_folders(tree, @start)
+
+      expect(tree.keys.collect(&:name)).to eql([@folder_c.name])
+      expect(tree[tree.keys.first]).to eql({})
+    end
+
+    it "modify edge b" do
+      @folder_b.touch
+      described_class.prune_unchanged_folders(tree, @start)
+
+      expect(tree.keys.collect(&:name)).to eql([@folder_b.name])
+      expect(tree[tree.keys.first]).to eql({})
+    end
+
+    it "modify leaf d with parent edge b" do
+      @folder_d.touch
+      described_class.prune_unchanged_folders(tree, @start)
+
+      expect(tree.keys.collect(&:name)).to eql([@folder_b.name])
+      expect(tree[tree.keys.first].keys.collect(&:name)).to eql([@folder_d.name])
+    end
+
+    it "modify leaf d relationship with parent edge b" do
+      @folder_d.relationships.first.touch
+      described_class.prune_unchanged_folders(tree, @start)
+
+      expect(tree.keys.collect(&:name)).to eql([@folder_b.name])
+      expect(tree[tree.keys.first].keys.collect(&:name)).to eql([@folder_d.name])
+    end
+
+    it "modify edge b's first relationhip's child" do
+      @folder_b.relationships.first.children.first.touch
+      described_class.prune_unchanged_folders(tree, @start)
+
+      expect(tree.keys.collect(&:name)).to eql([@folder_b.name])
+      expect(tree[tree.keys.first].keys.collect(&:name)).to eql([@folder_d.name])
+    end
+  end
+
   context ".event_by_property" do
     context "should add an EMS event" do
       before(:each) do
