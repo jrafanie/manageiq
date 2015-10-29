@@ -35,8 +35,7 @@ describe VmOrTemplate do
       @folder_c.add_child(vm)
 
       vms = described_class.extract_vms(@root.descendants_arranged)
-      expect(vms.collect(&:name)).to eql([vm.name, vm.name])
-      expect(vms[0].object_id).to eql vms[1].object_id
+      expect(vms.collect(&:name)).to eql([vm.name])
     end
   end
 

@@ -1178,7 +1178,7 @@ class VmOrTemplate < ActiveRecord::Base
     tree = root.descendants_arranged
     prune_unchanged_folders(tree, update_start_time)
 
-    updated_vms = extract_vms(tree).uniq - added_vms
+    updated_vms = extract_vms(tree) - added_vms
     updated_vms.each(&:classify_with_parent_folder_path_queue)
   end
 
@@ -1189,12 +1189,12 @@ class VmOrTemplate < ActiveRecord::Base
   #   extract_vms(tree)
   # end
 
-  def self.extract_vms(tree)
-    tree.flat_map do |object, children|
-      child_vms = extract_vms(children)
-      child_vms.unshift(object) if object.kind_of?(VmOrTemplate)
-      child_vms
+  def self.extract_vms(tree, vm_set = Set.new)
+    tree.each do |object, children|
+      extract_vms(children, vm_set)
+      vm_set.add?(object) if object.kind_of?(VmOrTemplate)
     end
+    vm_set
   end
 
   def self.prune_unchanged_folders(tree, update_start_time, parent = nil)
