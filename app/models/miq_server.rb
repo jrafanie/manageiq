@@ -11,6 +11,7 @@ class MiqServer < ActiveRecord::Base
   include_concern 'StatusManagement'
   include_concern 'UpdateManagement'
   include_concern 'RhnMirror'
+  include_concern 'EagerLoad'
 
   include UuidMixin
   include MiqPolicyMixin
@@ -183,6 +184,7 @@ class MiqServer < ActiveRecord::Base
     #############################################################
     sync_config
     start_drb_server
+    eager_load
     sync_workers
     wait_for_started_workers
 
