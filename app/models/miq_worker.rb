@@ -141,6 +141,21 @@ class MiqWorker < ActiveRecord::Base
     MiqServer.my_server.enough_resource_to_start_worker?(self)
   end
 
+  def self.memory_log
+    return unless Sys::Platform::IMPL == :linux
+
+    count, minor, major, live, old = GC.stat.values_at(:count, :minor_gc_count, :major_gc_count, :heap_live_slots, :old_objects)
+
+    shared_memory  = 0
+    private_memory = 0
+    lines = File.read("/proc/#{Process.pid}/smaps")
+    lines.scan(/.+?Shared_Dirty:\s+(\d+).+?Private_Dirty:\s+(\d+)/m) do |shared_dirty, private_dirty|
+      shared_memory  += shared_dirty.to_i
+      private_memory += private_dirty.to_i
+    end
+    _log.info("Live: #{live}, Old: #{old}, Shared: #{shared_memory} kB, Private: #{private_memory} kB, GC count / minor / major: #{count}/#{minor}/#{major}" )
+  end
+
   def self.sync_workers
     w       = include_stopping_workers_on_synchronize ? find_alive : find_current_or_starting
     current = w.length
@@ -342,9 +357,16 @@ class MiqWorker < ActiveRecord::Base
   def start
     self.class.before_fork
     pid = fork do
+      self.class.memory_log
+      sleep 1
       self.class.after_fork
+      self.class.memory_log
       self.class::Runner.start_worker(worker_options)
       exit!
+    end
+
+    3.times do
+      GC.start
     end
 
     Process.detach(pid)

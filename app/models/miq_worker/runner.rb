@@ -323,6 +323,7 @@ class MiqWorker::Runner
   def do_work_loop
     loop do
       begin
+        @worker.class.memory_log
         heartbeat
         do_work
       rescue TemporaryFailure

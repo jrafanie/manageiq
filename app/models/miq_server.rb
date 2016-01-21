@@ -175,6 +175,7 @@ class MiqServer < ActiveRecord::Base
     # Call all the startup methods only NOW, since some check roles
     #############################################################
     self.class.atStartup
+    MiqWorker.memory_log
 
     delete_active_log_collections_queue
 
@@ -183,6 +184,11 @@ class MiqServer < ActiveRecord::Base
     #############################################################
     sync_config
     start_drb_server
+    3.times do
+      GC.start
+    end
+    sleep 1
+    MiqWorker.memory_log
     sync_workers
     wait_for_started_workers
 
@@ -380,6 +386,7 @@ class MiqServer < ActiveRecord::Base
 
   def monitor_loop
     loop do
+      MiqWorker.memory_log
       _dummy, timings = Benchmark.realtime_block(:total_time) { monitor }
       _log.info "Server Monitoring Complete - Timings: #{timings.inspect}" unless timings[:total_time] < server_log_timings_threshold
       sleep monitor_poll
