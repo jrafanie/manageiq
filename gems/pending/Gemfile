@@ -23,8 +23,8 @@ gem "ffi-vix_disk_lib",        "~>1.0.2",           :require => false  # used by
 gem "fog",                     "~>2.0.0.pre.0",     :require => false
 gem "fog-core",                "!=1.31.1",          :require => false
 gem "httpclient",              "~>2.5.3",           :require => false
-gem "image-inspector-client",  "~>1.0.0",           :require => false
-gem "kubeclient",              "=0.8.0",            :require => false
+gem "image-inspector-client",  ">=1.0.0",           :require => false
+gem "kubeclient",              "=1.0.0",            :require => false
 gem "hawkular-client",         "~>0.1.2",           :require => false
 gem "linux_admin",             "~>0.14.0",          :require => false
 gem "log4r",                   "=1.1.8",            :require => false
@@ -34,7 +34,7 @@ gem "more_core_extensions",    "~>1.2.0",           :require => false
 gem "net-sftp",                "~>2.1.2",           :require => false
 gem "net-scp",                 "~>1.2.1",           :require => false
 gem "nokogiri",                "~>1.6.0",           :require => false
-gem "openshift_client",        "=0.3.0",            :require => false
+gem "openshift_client",        "=1.0.0",            :require => false
 gem "ovirt",                   "~>0.7.1",           :require => false
 gem "parallel",                "~>0.5.21",          :require => false
 gem "pg",                      "~>0.18.2",          :require => false
@@ -83,7 +83,8 @@ unless ENV['APPLIANCE']
     gem "test-unit",                    :require => false
     gem "camcorder",                    :require => false
     gem "jasmine",       "~>2.4.0",     :require => false
-    gem "rspec",         "~>3.0",       :require => false
+    gem "rspec",         "~>3.4",       :require => false
+    gem "rspec-mocks",   ">= 3.4.1",    :require => false  # 3.4.1 fixed any_instance stubbing on ruby 2.3.0: https://github.com/rspec/rspec-mocks/compare/v3.4.0...v3.4.1
     gem "timecop",       "~>0.7.3",     :require => false
     gem "xml-simple",    "=1.0.12",     :require => false  # Used by test/xml/tc_xmlhash_methods.rb
   end
