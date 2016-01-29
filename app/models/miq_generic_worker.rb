@@ -11,7 +11,7 @@ class MiqGenericWorker < MiqQueueWorkerBase
     $smaps_log.info("XXX #{self}.after_fork")
     start_memory_log_thread
     $smaps_log.info("XXX #{self}.after_fork")
-    sleep 30
+    # sleep 30
     $smaps_log.info("XXX #{self}.after_fork before super")
     super
     $smaps_log.info("XXX #{self}.after_fork after super")

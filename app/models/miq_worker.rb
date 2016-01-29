@@ -354,7 +354,6 @@ class MiqWorker < ApplicationRecord
   def start
     self.class.before_fork
     pid = fork(:cow_friendly => true) do
-      sleep 2
       self.class.after_fork
       self.class::Runner.start_worker(worker_options)
       exit!
