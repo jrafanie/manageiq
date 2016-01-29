@@ -26,6 +26,7 @@ gem "sass-rails"
 # Vendored and required
 gem "ruport",                         "=1.7.0",                       :git => "git://github.com/ManageIQ/ruport.git", :tag => "v1.7.0-3"
 
+gem 'nakayoshi_fork'
 
 # Vendored but not required
 gem "net-ldap",                       "~>0.7.0",   :require => false
