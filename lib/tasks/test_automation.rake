@@ -9,6 +9,16 @@ namespace :test do
     task :teardown
   end
 
+  def automation_directories_for_parallel
+    Dir.glob("./spec/automation")
+  end
+
+  task :automation_parallel => [:initialize, "evm:compile_sti_loader"] do
+    require 'parallel_tests'
+
+    ParallelTests::CLI.new.run(["--type", "rspec"] + automation_directories_for_parallel)
+  end
+
   desc "Run all automation specs"
   RSpec::Core::RakeTask.new(:automation => [:initialize, "evm:compile_sti_loader"]) do |t|
     EvmTestHelper.init_rspec_task(t)
