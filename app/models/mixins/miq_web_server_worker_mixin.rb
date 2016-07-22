@@ -169,7 +169,8 @@ module MiqWebServerWorkerMixin
     params = {
       :Host        => self.class.binding_address,
       :environment => Rails.env.to_s,
-      :app         => rails_application
+      :app         => rails_application,
+      :server      => "thin"
     }
 
     params[:Port] = port.kind_of?(Numeric) ? port : 3000
