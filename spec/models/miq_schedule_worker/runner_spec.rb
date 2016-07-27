@@ -132,10 +132,17 @@ describe MiqScheduleWorker::Runner do
           first_at = Time.utc(2011, 1, 1, 8, 30)
           @sch = FactoryGirl.create(:miq_schedule_validation, :run_at => {:start_time => "2011-01-01 08:30:00 Z", :interval => {:unit => "monthly", :value => "1"}})
 
-          Timecop.freeze(first_at - 1.minute) do
+          Timecop.freeze(first_at + 1) do
             @schedule_worker.rufus_add_schedule(:method => :schedule_at, :interval => first_at, :months => 1, :schedule_id => @sch.id, :discard_past => true, :tags => "miq_schedules_1")
             schedules = @schedule_worker.instance_variable_get(:@schedules)
             expect(schedules[:scheduler].length).to eq(60)
+          end
+
+          expect(@schedule_worker.queue_length).to eq(0)
+
+          Timecop.freeze(first_at + 1.month + 5) do
+            sleep 1 #until @schedule_worker.queue_length > 0
+            expect(@schedule_worker.queue_length).to eq(1)
           end
         end
 
