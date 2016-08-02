@@ -14,6 +14,7 @@ module ControllerSpecHelper
     allow(controller).to receive(:check_privileges).and_return(true)
     login_as user
     allow(controller).to receive(:role_allows).and_return(true)
+    allow(Rbac::Authorizer).to receive(:role_allows).and_return(true)
   end
 
   def setup_zone
