@@ -14,27 +14,29 @@ module MiqServer::WorkerManagement::Monitor
 
   def monitor_workers
     # Clear the my_server cache so we can detect role and possibly other changes faster
-    self.class.my_server_clear_cache
+    Benchmark.realtime_block(:my_server_clear_cache) { self.class.my_server_clear_cache }
 
-    resync_needed, sync_message = sync_needed?
+    resync_needed, sync_message = Benchmark.realtime_block(:sync_needed) { sync_needed? }
 
     # Sync the workers after sync'ing the child worker settings
-    sync_workers
+    Benchmark.realtime_block(:sync_workers) { sync_workers }
 
-    MiqWorker.status_update_all
+    Benchmark.realtime_block(:status_update_all) { MiqWorker.status_update_all }
 
     processed_worker_ids = []
 
-    self.class.monitor_class_names.each do |class_name|
-      processed_worker_ids += check_not_responding(class_name)
-      processed_worker_ids += check_pending_stop(class_name)
-      processed_worker_ids += clean_worker_records(class_name)
-      processed_worker_ids += post_message_for_workers(class_name, resync_needed, sync_message)
+    Benchmark.realtime_block(:monitor_class_names) do
+      self.class.monitor_class_names.each do |class_name|
+        processed_worker_ids += check_not_responding(class_name)
+        processed_worker_ids += check_pending_stop(class_name)
+        processed_worker_ids += clean_worker_records(class_name)
+        processed_worker_ids += post_message_for_workers(class_name, resync_needed, sync_message)
+      end
     end
 
-    validate_active_messages(processed_worker_ids)
+    Benchmark.realtime_block(:validate_active_messages) { validate_active_messages(processed_worker_ids) }
 
-    do_system_limit_exceeded if self.kill_workers_due_to_resources_exhausted?
+    Benchmark.realtime_block(:do_system_limit_exceeded) { do_system_limit_exceeded } if self.kill_workers_due_to_resources_exhausted?
   end
 
   def worker_not_responding(w)
