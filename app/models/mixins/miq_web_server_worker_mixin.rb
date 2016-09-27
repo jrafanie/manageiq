@@ -26,6 +26,21 @@ module MiqWebServerWorkerMixin
       configure_secret_token
     end
 
+    def load_full_routes
+      # config/routes.rb is kept empty because our routes are enormous
+      # and should only parse it in processes that need them.
+
+      # This Hack could be changed to use a Rails Engine to provide just the full routes
+      paths = Rails.application.routes_reloader.instance_variable_get(:@paths)
+      Rails.application.routes_reloader.instance_variable_set(:@paths, paths << Rails.root.join("config/routes2.rb"))
+      Rails.application.reload_routes!
+    end
+
+    def after_fork
+      load_full_routes
+      super
+    end
+
     def configure_secret_token(token = MiqDatabase.first.session_secret_token)
       return if Rails.application.config.secret_token
 

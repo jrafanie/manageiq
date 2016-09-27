@@ -13,6 +13,7 @@ module Vmdb
         # preload_for_worker_role depends on seeding, principally MiqDatabase
         EvmDatabase.seed_primordial
 
+        MiqUiWorker.load_full_routes
         MiqUiWorker.preload_for_worker_role
         MiqServer.my_server.starting_server_record
         MiqServer.my_server.update_attributes(:status => "started")
