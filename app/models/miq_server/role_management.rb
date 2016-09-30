@@ -268,6 +268,13 @@ module MiqServer::RoleManagement
             s2.activate_roles(role_name)
             active << [s2, p2]
           end
+
+          if !s.healthy_for_role_activation? && !inactives_by_health_priority.empty?
+            # Deactivate this role on an unhealthy server if there's a healthy one
+            # to take it. Let the next pass through this method activate the role.
+            _log.info("Deactiving role <#{role_name}> on unhealthy server <#{s.name}> with <#{s.system_memory_free}> free memory since a healthy server will take it.")
+            s.deactivate_roles(role_name)
+          end
         end
 
       end
