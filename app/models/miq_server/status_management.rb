@@ -3,6 +3,12 @@ require 'miq-system'
 module MiqServer::StatusManagement
   extend ActiveSupport::Concern
 
+  HEALTHY_MEMORY_CUSHION = 200.megabytes
+  included do
+    default_value_for :system_memory_free, HEALTHY_MEMORY_CUSHION
+    default_value_for :system_swap_used, 0
+  end
+
   def status_update
     self.attributes = system_status
     self.attributes = process_status
@@ -26,6 +32,14 @@ module MiqServer::StatusManagement
     pinfo.keep_if { |k, _v| MiqWorker::PROCESS_INFO_FIELDS.include?(k) }
     pinfo[:os_priority] = pinfo.delete(:priority)
     pinfo
+  end
+
+  def healthy_for_role_activation?
+    memory_available_for_new_processes >= HEALTHY_MEMORY_CUSHION
+  end
+
+  def memory_available_for_new_processes
+    system_memory_free - system_swap_used
   end
 
   module ClassMethods
