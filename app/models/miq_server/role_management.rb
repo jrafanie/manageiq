@@ -205,6 +205,17 @@ module MiqServer::RoleManagement
     active_role_names.include?(role.to_s.strip.downcase)
   end
 
+  def sort_role_servers_health(role_servers)
+    role_servers.sort_by do |s, priority|
+      # Choose:
+      #  1. "healthy" servers first (at least X MB available) (lower first)
+      #  2. "priority" servers next (roles can be pinned to a server via a lower priority number)
+      #  3. servers with the most memory available (negate it because lower is sorted first)
+      healthy = s.healthy_for_role_activation? ? 0 : 1
+      [healthy, priority, -s.memory_available_for_new_processes]
+    end
+  end
+
   def synchronize_active_roles(servers, roles_to_sync)
     current = Hash.new { |h, k| h[k] = {:active => [], :inactive => []} }
     servers.each do |s|
@@ -238,8 +249,9 @@ module MiqServer::RoleManagement
           inactive = inactive.sort { |a, b| a.last <=> b.last } # Sort again, since we may have added to array
         elsif delta > 0
           delta.times do
-            if inactive.length > 0
-              s, p = inactive.shift
+            inactives_by_health_priority = sort_role_servers_health(inactive)
+            if inactives_by_health_priority.length > 0
+              s, p = inactives_by_health_priority.shift
               s.activate_roles(role_name)
               active << [s, p]
             end
@@ -248,8 +260,9 @@ module MiqServer::RoleManagement
         end
 
         active.each do |s, p|
-          if (inactive.length > 0) && (p > inactive.first.last)
-            s2, p2 = inactive.shift
+          inactives_by_health_priority = sort_role_servers_health(inactive)
+          if (inactives_by_health_priority.length > 0) && (p > inactives_by_health_priority.first.last)
+            s2, p2 = inactives_by_health_priority.shift
             _log.info("Migrating Role <#{role_name}> Active on Server <#{s.name}> with Priority <#{p}> to Server <#{s2.name}> with Priority <#{p2}>")
             s.deactivate_roles(role_name)
             s2.activate_roles(role_name)
