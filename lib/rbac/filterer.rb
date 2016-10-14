@@ -408,6 +408,13 @@ module Rbac
       tenant_id_clause ? scope.where(tenant_id_clause) : scope
     end
 
+    def scope_to_tenant_dupe_just_user(scope, user)
+      klass = scope.respond_to?(:klass) ? scope.klass : scope
+      tenant_id_clause = klass.tenant_id_clause(user)
+
+      tenant_id_clause ? scope.where(tenant_id_clause) : scope
+    end
+
     ##
     # Main scoping method
     #
@@ -435,6 +442,8 @@ module Rbac
       elsif klass == MiqGroup && miq_group.try!(:self_service?)
         # Self Service users searching for groups only see their group
         scope = scope.where(:id => miq_group.id)
+      elsif klass.downcase == "miqtemplate" && user.try!(:self_service?)
+        scope = scope = scope.where(:id => user.id)
       else
         scope
       end
