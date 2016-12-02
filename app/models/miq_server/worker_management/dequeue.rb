@@ -1,9 +1,9 @@
 module MiqServer::WorkerManagement::Dequeue
   extend ActiveSupport::Concern
 
-  def peek(queue_name, priority, limit)
+  def peek(queue_name, priority, limit, role = @active_role_names)
     MiqQueue.peek(
-      :conditions => {:queue_name => queue_name, :priority => priority, :role => @active_role_names},
+      :conditions => {:queue_name => queue_name, :priority => priority, :role => role},
       :select     => "id, lock_version, priority, role",
       :limit      => limit
     )
@@ -103,6 +103,92 @@ module MiqServer::WorkerManagement::Dequeue
       end
     end unless @workers_lock.nil?
     queue_names
+  end
+
+  def queue_names_with_no_queue_work
+    no_work_queue_names = []
+    @queue_messages_lock.synchronize(:SH) do
+      @queue_messages.each do |queue_name, message_hash|
+        if message_hash[:messages].empty?
+          _log.info("XXX: queue_name: #{queue_name} has NO queue work")
+          no_work_queue_names << queue_name
+        else
+          _log.info("XXX: queue_name: #{queue_name} has queue work")
+        end
+      end
+    end
+    no_work_queue_names
+  end
+
+  def scale_down_queue_workers
+    queue_names_with_no_queue_work.each do |queue_name|
+      klasses = worker_classes_for_queue_name[queue_name]
+      if klasses.empty?
+        _log.info("XXX: queue_name: #{queue_name} There are no classes for this queue...skipping")
+        next
+      else
+        _log.info("XXXYYY: queue_name: #{queue_name} There are classes for this queue")
+      end
+
+      klasses.each do |k|
+        if (k.workers - 1) >= k.minimum_workers
+          original_worker_class_counts[k] ||= k.workers
+          _log.info("XXXYYY: queue_name: #{queue_name}, scaling down class: #{k.name} from #{k.workers} to #{k.workers - 1}")
+          k.workers -= 1
+        else
+          _log.info("XXX: queue_name: #{queue_name}, class: #{k.name} #{k.workers} is already at the minumum workers #{k.minimum_workers}...skipping")
+        end
+      end
+    end
+  end
+
+  def scale_up_queue_workers
+    original_worker_class_counts.each do |k, count|
+      role = []
+      if k.required_roles.present?
+        missing_roles = k.required_roles - @active_role_names
+        if missing_roles.empty?
+          _log.info("XXXYYY: #{k} all required roles are active: #{k.required_roles.inspect}, active_roles: #{@active_role_names.inspect}")
+        else
+          # skip worker classes without the required roles active
+          _log.info("XXX: #{k} is missing active required roles for #{missing_roles}... skipping")
+          next
+        end
+        role = k.required_roles
+      end
+
+      msg = peek(k.default_queue_name, k.queue_priority || MiqQueue::MIN_PRIORITY, 1, role)
+      if !msg.empty?
+        if k.workers < count
+          _log.info("XXXYYY: found work: #{msg.inspect.truncate(25)}, scaling up class: #{k.name} from #{k.workers} to #{k.workers + 1}, original count: #{count}")
+          k.workers += 1
+        else
+          _log.info("XXX: found work: #{msg.inspect.truncate(25)}, but class: #{k.name} is already scaled up to #{k.workers}...skipping")
+        end
+      end
+
+      # If we've scaled up to the original value, stop tracking this class
+      if k.workers == count
+        _log.info("XXX: #{k.name} has scaled back to the original worker count: #{k.workers}")
+        original_worker_class_counts.delete(k)
+      end
+    end
+  end
+
+  def original_worker_class_counts
+    @original_worker_class_counts ||= {}
+  end
+
+  def worker_classes_for_queue_name
+    @worker_classes_for_queue_name ||=
+      begin
+        mapping = {}
+        MiqQueueWorkerBase.subclasses.each do |c|
+          mapping[c.default_queue_name] ||= []
+          mapping[c.default_queue_name] << c
+        end
+        mapping
+      end
   end
 
   def populate_queue_messages

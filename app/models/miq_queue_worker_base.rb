@@ -4,4 +4,8 @@ class MiqQueueWorkerBase < MiqWorker
   def self.queue_priority
     MiqQueue::MIN_PRIORITY
   end
+
+  def self.minimum_workers
+    1
+  end
 end

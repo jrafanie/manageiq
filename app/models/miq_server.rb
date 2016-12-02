@@ -325,6 +325,14 @@ class MiqServer < ApplicationRecord
     (::Settings.server.worker_monitor_frequency || 15.seconds).to_i_with_method
   end
 
+  def scale_down_frequency
+    (::Settings.server.scale_down_frequency || 2.minutes).to_i_with_method
+  end
+
+  def scale_up_frequency
+    (::Settings.server.scale_up_frequency || 15.seconds).to_i_with_method
+  end
+
   def threshold_exceeded?(name, now = Time.now.utc)
     @thresholds ||= Hash.new(1.day.ago.utc)
     exceeded = now > (@thresholds[name] + send(name))
@@ -345,6 +353,8 @@ class MiqServer < ApplicationRecord
     Benchmark.realtime_block(:log_active_servers)      { log_active_servers }               if threshold_exceeded?(:server_log_frequency, now)
     Benchmark.realtime_block(:worker_monitor)          { monitor_workers }                  if threshold_exceeded?(:worker_monitor_frequency, now)
     Benchmark.realtime_block(:worker_dequeue)          { populate_queue_messages }          if threshold_exceeded?(:worker_dequeue_frequency, now)
+    Benchmark.realtime_block(:scale_down)              { scale_down_queue_workers }         if threshold_exceeded?(:scale_down_frequency, now)
+    Benchmark.realtime_block(:scale_up)                { scale_up_queue_workers }           if threshold_exceeded?(:scale_up_frequency, now)
   rescue SystemExit
     # TODO: We're rescuing Exception below. WHY? :bomb:
     # A SystemExit would be caught below, so we need to explicitly rescue/raise.
