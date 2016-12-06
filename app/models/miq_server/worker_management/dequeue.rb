@@ -144,18 +144,7 @@ module MiqServer::WorkerManagement::Dequeue
 
   def scale_up_queue_workers
     original_worker_class_counts.each do |k, count|
-      role = []
-      if k.required_roles.present?
-        missing_roles = k.required_roles - @active_role_names
-        if missing_roles.empty?
-          _log.info("XXXYYY: #{k} all required roles are active: #{k.required_roles.inspect}, active_roles: #{@active_role_names.inspect}")
-        else
-          # skip worker classes without the required roles active
-          _log.info("XXX: #{k} is missing active required roles for #{missing_roles}... skipping")
-          next
-        end
-        role = k.required_roles
-      end
+      role = k.required_roles.present? ? k.required_roles : []
 
       msg = peek(k.default_queue_name, k.queue_priority || MiqQueue::MIN_PRIORITY, 1, role)
       if !msg.empty?
