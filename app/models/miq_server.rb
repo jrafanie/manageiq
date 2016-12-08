@@ -347,8 +347,8 @@ class MiqServer < ApplicationRecord
     end if threshold_exceeded?(:server_monitor_frequency, now)
 
     Benchmark.realtime_block(:log_active_servers)      { log_active_servers }               if threshold_exceeded?(:server_log_frequency, now)
-    Benchmark.realtime_block(:scale_down)              { scale_down_queue_workers }         if threshold_exceeded?(:scale_down_frequency, now)
     Benchmark.realtime_block(:scale_up)                { scale_up_queue_workers }           # always scale up immediately
+    Benchmark.realtime_block(:scale_down)              { scale_down_queue_workers }         if threshold_exceeded?(:scale_down_frequency, now)
     Benchmark.realtime_block(:worker_monitor)          { monitor_workers }                  if threshold_exceeded?(:worker_monitor_frequency, now)
     Benchmark.realtime_block(:worker_dequeue)          { populate_queue_messages }          if threshold_exceeded?(:worker_dequeue_frequency, now)
   rescue SystemExit
