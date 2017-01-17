@@ -12,6 +12,8 @@ class ManageIQ::Providers::AnsibleTower::Provider < ::Provider
   validates :name, :presence => true, :uniqueness => true
   validates :url,  :presence => true
 
+  DEFAULT_EMBEDDED_NAME = "Embedded Ansible"
+
   def self.raw_connect(base_url, username, password, verify_ssl)
     require 'ansible_tower_client'
     AnsibleTowerClient.logger = $log
@@ -58,6 +60,18 @@ class ManageIQ::Providers::AnsibleTower::Provider < ::Provider
     uri      = URI(new_url)
     uri.path = default_api_path if uri.path.blank?
     default_endpoint.url = uri.to_s
+  end
+
+  def self.seed
+    embedded_in_zone ||
+      create_with(:url => "https://localhost:8443", :zone => Zone.default_zone)
+        .find_or_create_by(:name=> DEFAULT_EMBEDDED_NAME)
+        # do we need to create an endpoint/authentication here?
+        # We probably need to tie this provider to a miq_servers row
+  end
+
+  def self.embedded_in_zone
+    find_by(:name => DEFAULT_EMBEDDED_NAME, :zone => MiqServer.my_zone)
   end
 
   private

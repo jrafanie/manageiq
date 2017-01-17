@@ -25,6 +25,7 @@ class EvmDatabase
     MiqAction
     MiqEventDefinition
     MiqPolicySet
+    ManageIQ::Providers::AnsibleTower::Provider
   )
 
   RAILS_ENGINE_MODEL_CLASS_NAMES = %w(MiqAeDatastore)
