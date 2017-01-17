@@ -57,6 +57,7 @@ module MiqServer::WorkerManagement::Monitor::ClassNames
     ManageIQ::Providers::StorageManager::CinderManager::EventCatcher
     ManageIQ::Providers::Vmware::InfraManager::EventCatcher
     ManageIQ::Providers::Vmware::CloudManager::EventCatcher
+    ManageIQ::Providers::AnsibleTower::EmbeddedAnsibleWorker
     MiqEventHandler
     MiqGenericWorker
     MiqNetappRefreshWorker
@@ -86,6 +87,7 @@ module MiqServer::WorkerManagement::Monitor::ClassNames
     ManageIQ::Providers::Openstack::CloudManager::MetricsCollectorWorker
     ManageIQ::Providers::Openstack::NetworkManager::MetricsCollectorWorker
     ManageIQ::Providers::Openstack::InfraManager::MetricsCollectorWorker
+    ManageIQ::Providers::AnsibleTower::EmbeddedAnsibleWorker
     MiqReportingWorker
     MiqSmartProxyWorker
     MiqGenericWorker
