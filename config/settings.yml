@@ -1193,7 +1193,8 @@
       :restart_interval: 0.hours
       :starting_timeout: 10.minutes
     :embedded_ansible_worker:
-      :poll: 30.seconds
+      :poll: 10.seconds
+      :memory_threshold: 0.megabytes
     :ems_refresh_core_worker:
       :poll: 1.seconds
       :nice_delta: 1
