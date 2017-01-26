@@ -2,12 +2,11 @@ class ManageIQ::Providers::AnsibleTower::EmbeddedAnsibleWorker::Runner < MiqWork
   def prepare
     set_tower
 
-    $log.info("MIQ(AnsibleTower::EmbeddedAnsibleWorker::Runner#start_worker): calling EmbeddedAnsible.activate")
+    Thread.new do
+      setup_ansible
+      started_worker_record
+    end
 
-    EmbeddedAnsible.configure unless EmbeddedAnsible.configured?
-    EmbeddedAnsible.start
-
-    started_worker_record
     self
   end
 
@@ -15,11 +14,27 @@ class ManageIQ::Providers::AnsibleTower::EmbeddedAnsibleWorker::Runner < MiqWork
   def do_work_loop
     Thread.new do
       loop do
+        break if worker.reload.started?
+        _log.info("waiting for ansible setup")
+        heartbeat
+        send(poll_method)
+      end
+
+      _log.info("entering ansible monitor loop")
+      loop do
         heartbeat
         do_work
         send(poll_method)
       end
     end
+  end
+
+  def setup_ansible
+    _log.info("calling EmbeddedAnsible.configure")
+    EmbeddedAnsible.configure unless EmbeddedAnsible.configured?
+
+    _log.info("calling EmbeddedAnsible.start")
+    EmbeddedAnsible.start
   end
 
   def do_work
