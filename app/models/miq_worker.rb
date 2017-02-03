@@ -2,6 +2,7 @@ require 'io/wait'
 
 class MiqWorker < ApplicationRecord
   include UuidMixin
+  include ProcessWorkerMixin
 
   before_destroy :log_destroy_of_worker_messages
 
@@ -29,9 +30,7 @@ class MiqWorker < ApplicationRecord
   STATUSES_STOPPED  = [STATUS_STOPPED, STATUS_KILLED, STATUS_ABORTED]
   STATUSES_CURRENT_OR_STARTING = STATUSES_CURRENT + STATUSES_STARTING
   STATUSES_ALIVE    = STATUSES_CURRENT_OR_STARTING + [STATUS_STOPPING]
-  PROCESS_INFO_FIELDS = %i(priority memory_usage percent_memory percent_cpu memory_size cpu_time proportional_set_size)
 
-  PROCESS_TITLE_PREFIX = "MIQ:".freeze
   def self.atStartup
     # Delete and Kill all workers that were running previously
     clean_all_workers
@@ -307,72 +306,6 @@ class MiqWorker < ApplicationRecord
     )
   end
 
-  def self.before_fork
-    preload_for_worker_role if respond_to?(:preload_for_worker_role)
-  end
-
-  def self.after_fork
-    close_pg_sockets_inherited_from_parent
-    DRb.stop_service
-    renice(Process.pid)
-  end
-
-  # When we fork, the children inherits the parent's file descriptors
-  # so we need to close any inherited raw pg sockets in the child.
-  def self.close_pg_sockets_inherited_from_parent
-    owner_to_pool = ActiveRecord::Base.connection_handler.instance_variable_get(:@owner_to_pool)
-    owner_to_pool[Process.ppid].values.compact.each do |pool|
-      pool.connections.each do |conn|
-        socket = conn.raw_connection.socket
-        _log.info "Closing socket: #{socket}"
-        IO.for_fd(socket).close
-      end
-    end
-  end
-
-  def start_runner
-    self.class.before_fork
-    pid = fork(:cow_friendly => true) do
-      self.class.after_fork
-      self.class::Runner.start_worker(worker_options)
-      exit!
-    end
-
-    Process.detach(pid)
-    pid
-  end
-
-  def start
-    self.pid = start_runner
-    save
-
-    msg = "Worker started: ID [#{id}], PID [#{pid}], GUID [#{guid}]"
-    MiqEvent.raise_evm_event_queue(miq_server, "evm_worker_start", :event_details => msg, :type => self.class.name)
-
-    _log.info(msg)
-    self
-  end
-
-  def stop
-    miq_server.stop_worker_queue(self)
-  end
-
-  # Let the worker monitor start a new worker
-  alias_method :restart, :stop
-
-  def kill
-    unless pid.nil?
-      begin
-        _log.info("Killing worker: ID [#{id}], PID [#{pid}], GUID [#{guid}], status [#{status}]")
-        Process.kill(9, pid) if is_alive?
-      rescue => err
-        _log.warn("Worker ID [#{id}] PID [#{pid}] GUID [#{guid}] has been killed, but with the following error: #{err}")
-      end
-    end
-
-    destroy
-  end
-
   def quiesce_time_allowance
     allowance = self.class.worker_settings[:quiesce_time_allowance]
     @quiesce_time_allowance ||= allowance || current_timeout || 5.minutes
@@ -392,10 +325,6 @@ class MiqWorker < ApplicationRecord
 
   def started?
     STATUS_STARTED == status
-  end
-
-  def actually_running?
-    MiqProcess.is_worker?(pid)
   end
 
   def enabled_or_running?
@@ -424,21 +353,6 @@ class MiqWorker < ApplicationRecord
     end
   end
 
-  def status_update
-    begin
-      pinfo = MiqProcess.processInfo(pid)
-    rescue Errno::ESRCH
-      update(:status => STATUS_ABORTED)
-      _log.warn("No such process [#{friendly_name}] with PID=[#{pid}], aborting worker.")
-    rescue => err
-      _log.warn("Unexpected error: #{err.message}, while requesting process info for [#{friendly_name}] with PID=[#{pid}]")
-    else
-      # Ensure the hash only contains the values we want to store in the table
-      pinfo.slice!(*PROCESS_INFO_FIELDS)
-      pinfo[:os_priority] = pinfo.delete(:priority)
-      update_attributes!(pinfo)
-    end
-  end
 
   def log_status(level = :info)
     _log.send(level, "[#{friendly_name}] Worker ID [#{id}], PID [#{pid}], GUID [#{guid}], Last Heartbeat [#{last_heartbeat}], Process Info: Memory Usage [#{memory_usage}], Memory Size [#{memory_size}], Proportional Set Size: [#{proportional_set_size}], Memory % [#{percent_memory}], CPU Time [#{cpu_time}], CPU % [#{percent_cpu}], Priority [#{os_priority}]")
@@ -509,14 +423,4 @@ class MiqWorker < ApplicationRecord
                            name.demodulize.underscore
                          end
   end
-
-  def self.renice(pid)
-    AwesomeSpawn.run("renice", :params =>  {:n => nice_increment, :p => pid })
-  end
-
-  def self.nice_increment
-    delta = worker_settings[:nice_delta]
-    delta.kind_of?(Integer) ? delta.to_s : "+10"
-  end
-  private_class_method :nice_increment
 end
