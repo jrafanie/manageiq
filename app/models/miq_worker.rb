@@ -238,13 +238,7 @@ class MiqWorker < ApplicationRecord
 
   def self.clean_workers
     time_threshold = 1.hour
-    server_scope.each do |w|
-      Process.kill(9, w.pid) if w.pid && w.is_alive? rescue nil
-      # if w.last_heartbeat && (time_threshold.ago.utc < w.last_heartbeat)
-      #   ActiveRecord::Base.connection.kill(w.sql_spid)
-      # end
-      w.destroy
-    end
+    server_scope.each(&:kill)
   end
 
   def self.status_update
@@ -370,15 +364,12 @@ class MiqWorker < ApplicationRecord
     unless pid.nil?
       begin
         _log.info("Killing worker: ID [#{id}], PID [#{pid}], GUID [#{guid}], status [#{status}]")
-        Process.kill(9, pid)
-      rescue Errno::ESRCH
-        _log.warn("Worker ID [#{id}] PID [#{pid}] GUID [#{guid}] has been killed")
+        Process.kill(9, pid) if is_alive?
       rescue => err
         _log.warn("Worker ID [#{id}] PID [#{pid}] GUID [#{guid}] has been killed, but with the following error: #{err}")
       end
     end
 
-    # ActiveRecord::Base.connection.kill(self.sql_spid)
     destroy
   end
 
