@@ -28,7 +28,6 @@ manageiq_plugin "manageiq-providers-openshift"
 manageiq_plugin "manageiq-providers-openstack"
 manageiq_plugin "manageiq-providers-ovirt"
 manageiq_plugin "manageiq-providers-vmware"
-manageiq_plugin "manageiq-ui-classic"
 
 # Unmodified gems
 gem "activerecord-session_store",     "~>1.0.0"
@@ -66,7 +65,6 @@ gem "open4",                          "~>1.3.0",       :require => false
 gem "ovirt-engine-sdk",               "~>4.1.4",       :require => false # Required by the oVirt provider
 gem "ovirt_metrics",                  "~>1.4.1",       :require => false
 gem "pg-pglogical",                   "~>1.1.0",       :require => false
-gem "puma",                           "~>3.3.0"
 gem "query_relation",                 "~>0.1.0",       :require => false
 gem "rails",                          "~>5.0.2"
 gem "rails-controller-testing",                        :require => false
@@ -81,9 +79,6 @@ gem "secure_headers",                 "~>3.0.0"
 gem "simple-rss",                     "~>1.3.1",       :require => false
 gem "snmp",                           "~>1.2.0",       :require => false
 gem "sshkey",                         "~>1.8.0",       :require => false
-gem "thin",                           "~>1.7.0",       :require => false
-gem "vmware_web_service",             "~>0.1.1",       :require => false
-gem "websocket-driver",               "~>0.6.3"
 
 # Modified gems (forked on Github)
 gem "foreman_api_client",             ">=0.1.0",   :require => false, :git => "https://github.com/ManageIQ/foreman_api_client.git", :branch => "master"
@@ -95,7 +90,18 @@ gem "ruport",                         "=1.7.0",                       :git => "h
 # https://github.com/jeremyevans/ruby-american_date
 gem "american_date"
 
+
+group :web_socket do
+  gem "websocket-driver",               "~>0.6.3"
+end
+
+group :web_server do
+  gem "puma",                           "~>3.3.0"
+  gem "thin",                           "~>1.7.0",       :require => false
+end
+
 group :ui_dependencies do # Added to Bundler.require in config/application.rb
+  manageiq_plugin "manageiq-ui-classic"
   # Modified gems (forked on Github)
   gem "jquery-rjs",                   "=0.1.1",                       :git => "https://github.com/ManageIQ/jquery-rjs.git", :tag => "v0.1.1-1"
 end
