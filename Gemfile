@@ -60,7 +60,7 @@ gem "net-ldap",                       "~>0.14.0",      :require => false
 gem "net-ping",                       "~>1.7.4",       :require => false
 gem "net-ssh",                        "=3.2.0",        :require => false
 gem "omniauth",                       "~>1.3.1",       :require => false
-gem "omniauth-google-oauth2",         "~>0.2.6"
+gem "omniauth-google-oauth2",         "~>0.2.6",       :require => false
 gem "open4",                          "~>1.3.0",       :require => false
 gem "ovirt-engine-sdk",               "~>4.1.4",       :require => false # Required by the oVirt provider
 gem "ovirt_metrics",                  "~>1.4.1",       :require => false
