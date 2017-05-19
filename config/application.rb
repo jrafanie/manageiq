@@ -39,8 +39,7 @@ ENV['BUNDLER_GROUPS'] ||= %w(
 
 if defined?(Bundler)
   groups = ENV['BUNDLER_GROUPS'].split(",").collect(&:to_sym)
-  puts "loading: #{Rails.groups.inspect}"
-  puts "loading: #{groups.inspect}"
+  puts "loading bundler groups: #{(Rails.groups + groups).inspect}"
   Bundler.require(*Rails.groups, *groups)
 end
 
