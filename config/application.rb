@@ -18,7 +18,24 @@ require 'action_cable/engine'
 #  This variable should be a comma separated list of groups.
 #  The default BUNDLER_GROUPS below includes all bundler groups not in the Rails.groups.
 #
-ENV['BUNDLER_GROUPS'] ||= "web_server,web_socket,ui_dependencies"
+ENV['BUNDLER_GROUPS'] ||= %w(
+  amazon
+  ansible
+  azure
+  foreman
+  google
+  hawkular
+  kubernetes
+  lenovo
+  openshift
+  openstack
+  ovirt
+  vmware
+  replication
+  ui_dependencies
+  web_server
+  web_socket
+).join(",")
 
 if defined?(Bundler)
   groups = ENV['BUNDLER_GROUPS'].split(",").collect(&:to_sym)

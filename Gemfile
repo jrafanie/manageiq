@@ -19,21 +19,12 @@ end
 
 manageiq_plugin "manageiq-automation_engine"
 manageiq_plugin "manageiq-content"
-manageiq_plugin "manageiq-providers-amazon"
-manageiq_plugin "manageiq-providers-azure"
-manageiq_plugin "manageiq-providers-hawkular"
-manageiq_plugin "manageiq-providers-kubernetes"
-manageiq_plugin "manageiq-providers-lenovo"
-manageiq_plugin "manageiq-providers-openshift"
-manageiq_plugin "manageiq-providers-openstack"
-manageiq_plugin "manageiq-providers-ovirt"
-manageiq_plugin "manageiq-providers-vmware"
+
 
 # Unmodified gems
 gem "activerecord-session_store",     "~>1.0.0"
 gem "acts_as_tree",                   "~>2.1.0" # acts_as_tree needs to be required so that it loads before ancestry
 gem "ancestry",                       "~>2.2.1",       :require => false
-gem "ansible_tower_client",           "~>0.12.2",      :require => false
 gem "bundler",                        ">=1.11.1",      :require => false
 gem "color",                          "~>1.8"
 gem "config",                         "~>1.3.0",       :require => false
@@ -41,10 +32,8 @@ gem "dalli",                          "~>2.7.4",       :require => false
 gem "default_value_for",              "~>3.0.2"
 gem "elif",                           "=0.1.0",        :require => false
 gem "fast_gettext",                   "~>1.2.0"
-gem "fog-google",                     ">=0.5.2",       :require => false
 gem "gettext_i18n_rails",             "~>1.7.2"
 gem "gettext_i18n_rails_js",          "~>1.1.0"
-gem "google-api-client",              "~>0.8.6",       :require => false
 gem "hamlit",                         "~>2.7.0"
 gem "hashie",                         "~>3.4.6",       :require => false
 gem "htauth",                         "2.0.0",         :require => false
@@ -59,12 +48,7 @@ gem "nakayoshi_fork",                 "~>0.0.3"  # provides a more CoW friendly 
 gem "net-ldap",                       "~>0.14.0",      :require => false
 gem "net-ping",                       "~>1.7.4",       :require => false
 gem "net-ssh",                        "=3.2.0",        :require => false
-gem "omniauth",                       "~>1.3.1",       :require => false
-gem "omniauth-google-oauth2",         "~>0.2.6",       :require => false
 gem "open4",                          "~>1.3.0",       :require => false
-gem "ovirt-engine-sdk",               "~>4.1.4",       :require => false # Required by the oVirt provider
-gem "ovirt_metrics",                  "~>1.4.1",       :require => false
-gem "pg-pglogical",                   "~>1.1.0",       :require => false
 gem "query_relation",                 "~>0.1.0",       :require => false
 gem "rails",                          "~>5.0.2"
 gem "rails-controller-testing",                        :require => false
@@ -80,7 +64,6 @@ gem "snmp",                           "~>1.2.0",       :require => false
 gem "sshkey",                         "~>1.8.0",       :require => false
 
 # Modified gems (forked on Github)
-gem "foreman_api_client",             ">=0.1.0",   :require => false, :git => "https://github.com/ManageIQ/foreman_api_client.git", :branch => "master"
 gem "ruport",                         "=1.7.0",                       :git => "https://github.com/ManageIQ/ruport.git", :tag => "v1.7.0-3"
 
 # In 1.9.3: Time.parse uses british version dd/mm/yyyy instead of american version mm/dd/yyyy
@@ -89,9 +72,69 @@ gem "ruport",                         "=1.7.0",                       :git => "h
 # https://github.com/jeremyevans/ruby-american_date
 gem "american_date"
 
+### providers
+group :amazon do
+  manageiq_plugin "manageiq-providers-amazon"
+end
 
-group :web_socket do
-  gem "websocket-driver",               "~>0.6.3"
+group :ansible do
+  gem "ansible_tower_client",           "~>0.12.2",      :require => false
+end
+
+group :azure do
+  manageiq_plugin "manageiq-providers-azure"
+end
+
+group :foreman do
+  gem "foreman_api_client",             ">=0.1.0",   :require => false, :git => "https://github.com/ManageIQ/foreman_api_client.git", :branch => "master"
+end
+
+group :google do
+  gem "fog-google",                     ">=0.5.2",       :require => false
+  gem "google-api-client",              "~>0.8.6",       :require => false
+  gem "omniauth",                       "~>1.3.1",       :require => false
+  gem "omniauth-google-oauth2",         "~>0.2.6",       :require => false
+end
+
+group :hawkular do
+  manageiq_plugin "manageiq-providers-hawkular"
+end
+
+group :kubernetes do
+  manageiq_plugin "manageiq-providers-kubernetes"
+end
+
+group :lenovo do
+  manageiq_plugin "manageiq-providers-lenovo"
+end
+
+group :openshift do
+  manageiq_plugin "manageiq-providers-openshift"
+end
+
+group :openstack do
+  manageiq_plugin "manageiq-providers-openstack"
+end
+
+group :ovirt do
+  manageiq_plugin "manageiq-providers-ovirt"
+  gem "ovirt-engine-sdk",               "~>4.1.4",       :require => false # Required by the oVirt provider
+  gem "ovirt_metrics",                  "~>1.4.1",       :require => false
+end
+
+group :vmware do
+  manageiq_plugin "manageiq-providers-vmware"
+end
+### end of provider bundler groups
+
+group :replication do
+  gem "pg-pglogical",                   "~>1.1.0",       :require => false
+end
+
+group :ui_dependencies do # Added to Bundler.require in config/application.rb
+  manageiq_plugin "manageiq-ui-classic"
+  # Modified gems (forked on Github)
+  gem "jquery-rjs",                   "=0.1.1",                       :git => "https://github.com/ManageIQ/jquery-rjs.git", :tag => "v0.1.1-1"
 end
 
 group :web_server do
@@ -100,10 +143,8 @@ group :web_server do
   gem "secure_headers",                 "~>3.0.0"
 end
 
-group :ui_dependencies do # Added to Bundler.require in config/application.rb
-  manageiq_plugin "manageiq-ui-classic"
-  # Modified gems (forked on Github)
-  gem "jquery-rjs",                   "=0.1.1",                       :git => "https://github.com/ManageIQ/jquery-rjs.git", :tag => "v0.1.1-1"
+group :web_socket do
+  gem "websocket-driver",               "~>0.6.3"
 end
 
 ### Start of gems excluded from the appliances.
