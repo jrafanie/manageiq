@@ -32,6 +32,7 @@ ENV['BUNDLER_GROUPS'] ||= %w(
   ovirt
   vmware
   replication
+  rest_api
   ui_dependencies
   web_server
   web_socket

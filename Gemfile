@@ -38,7 +38,6 @@ gem "hamlit",                         "~>2.7.0"
 gem "hashie",                         "~>3.4.6",       :require => false
 gem "htauth",                         "2.0.0",         :require => false
 gem "inifile",                        "~>3.0",         :require => false
-gem "jbuilder",                       "~>2.5.0" # For the REST API
 gem "manageiq-api-client",            "~>0.1.0",       :require => false
 gem "manageiq-network_discovery",     "~>0.1.1",       :require => false
 gem "manageiq-smartstate",            "~>0.1.1",       :require => false
@@ -129,6 +128,10 @@ end
 
 group :replication do
   gem "pg-pglogical",                   "~>1.1.0",       :require => false
+end
+
+group :rest_api do
+  gem "jbuilder",                       "~>2.5.0" # For the REST API
 end
 
 group :ui_dependencies do # Added to Bundler.require in config/application.rb
