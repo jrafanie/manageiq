@@ -57,7 +57,6 @@ gem "rufus-scheduler",                "~>3.1.3",       :require => false
 gem "rugged",                         "=0.25.0b10",    :require => false
 gem "simple-rss",                     "~>1.3.1",       :require => false
 gem "snmp",                           "~>1.2.0",       :require => false
-gem "sshkey",                         "~>1.8.0",       :require => false
 
 # Modified gems (forked on Github)
 gem "ruport",                         "=1.7.0",                       :git => "https://github.com/ManageIQ/ruport.git", :tag => "v1.7.0-3"
@@ -122,6 +121,12 @@ end
 group :vmware do
   manageiq_plugin "manageiq-providers-vmware"
 end
+
+### shared dependencies
+group :google, :openshift do
+  gem "sshkey",                         "~>1.8.0",       :require => false
+end
+
 ### end of provider bundler groups
 
 group :replication do
