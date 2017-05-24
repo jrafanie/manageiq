@@ -51,7 +51,6 @@ gem "query_relation",                 "~>0.1.0",       :require => false
 gem "rails",                          "~>5.0.2"
 gem "rails-controller-testing",                        :require => false
 gem "rails-i18n",                     "~>5.x"
-gem "responders",                     "~>2.0"
 gem "ripper_ruby_parser",                              :require => false
 gem "ruby-dbus" # For external auth
 gem "ruby-progressbar",               "~>1.7.0",       :require => false
@@ -142,6 +141,7 @@ end
 
 group :web_server do
   gem "puma",                           "~>3.3.0"
+  gem "responders",                     "~>2.0"
   gem "thin",                           "~>1.7.0",       :require => false
   gem "secure_headers",                 "~>3.0.0"
 end
