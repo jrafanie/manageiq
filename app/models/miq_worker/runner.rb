@@ -11,6 +11,7 @@ class MiqWorker::Runner
 
   INTERRUPT_SIGNALS = ["SIGINT", "SIGTERM"]
 
+  # DELETE ME
   OPTIONS_PARSER_SETTINGS = [
     [:guid,       'EVM Worker GUID',       String],
   ]
@@ -18,6 +19,7 @@ class MiqWorker::Runner
   SAFE_SLEEP_SECONDS = 60
 
   def self.start_worker(*args)
+    $log.info("#{self.name} $LOADED_FEATURES: #{$LOADED_FEATURES.length}")
     new(*args).start
   end
 
@@ -40,9 +42,9 @@ class MiqWorker::Runner
     INTERRUPT_SIGNALS
   end
 
-  def initialize(cfg = {})
-    @cfg = cfg
-    @cfg[:guid] ||= ENV['MIQ_GUID']
+  def initialize(*args)
+    # TODO: delete @cfg
+    @cfg = {:guid => args.first}
 
     $log ||= Rails.logger
 

@@ -1,8 +1,11 @@
+require 'activerecord-id_regions'
+
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   FIXTURE_DIR = Rails.root.join("db/fixtures")
 
+  include ActiveRecord::IdRegions
   include ArRegion
   include ArLock
   include ArNestedCountBy
@@ -12,6 +15,8 @@ class ApplicationRecord < ActiveRecord::Base
   extend ArTableLock
 
   # FIXME: UI code - decorator support
-  extend MiqDecorator::Klass
-  include MiqDecorator::Instance
+  if defined?(ManageIQ::UI::Classic)
+    extend MiqDecorator::Klass
+    include MiqDecorator::Instance
+  end
 end

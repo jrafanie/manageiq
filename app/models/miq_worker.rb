@@ -334,7 +334,7 @@ class MiqWorker < ApplicationRecord
     end
   end
 
-  def start_runner
+  def start_runner_via_fork
     self.class.before_fork
     pid = fork(:cow_friendly => true) do
       self.class.after_fork
@@ -346,8 +346,25 @@ class MiqWorker < ApplicationRecord
     pid
   end
 
+  def self.build_command_line(guid)
+    command_line = "#{Gem.ruby} #{runner_script} #{guid}"
+    ENV['APPLIANCE'] ? "nice #{nice_increment} #{command_line}" : command_line
+  end
+
+  def self.runner_script
+    script = Rails.root.join("lib/workers/bin", "#{self.name.demodulize.tableize.singularize}.rb")
+    raise "script not found: #{script}" unless File.exist?(script)
+    script
+  end
+
+  def start_runner_via_spawn
+    self.pid = Kernel.spawn(self.class.build_command_line(guid), [:out, :err] => [Rails.root.join("log", "evm.log"), "a"])
+    Process.detach(pid)
+    pid
+  end
+
   def start
-    self.pid = start_runner
+    self.pid = ENV['MIQ_SPAWN_WORKERS'].to_s.downcase == "true" ? start_runner_via_spawn : start_runner_via_fork
     save
 
     msg = "Worker started: ID [#{id}], PID [#{pid}], GUID [#{guid}]"
@@ -378,11 +395,6 @@ class MiqWorker < ApplicationRecord
 
     # ActiveRecord::Base.connection.kill(self.sql_spid)
     destroy
-  end
-
-  def quiesce_time_allowance
-    allowance = self.class.worker_settings[:quiesce_time_allowance]
-    @quiesce_time_allowance ||= allowance || current_timeout || 5.minutes
   end
 
   def is_current?
