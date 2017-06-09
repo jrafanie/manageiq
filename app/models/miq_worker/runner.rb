@@ -337,6 +337,7 @@ class MiqWorker::Runner
   end
 
   def do_work_loop
+    File.write(Rails.root.join("log", "loaded_features_#{Process.pid}_#{@worker.class.name}"), $LOADED_FEATURES.join("\n"))
     warn_about_heartbeat_skipping if skip_heartbeat?
     loop do
       begin
