@@ -19,7 +19,7 @@ end
 
 manageiq_plugin "manageiq-automation_engine"
 manageiq_plugin "manageiq-content"
-manageiq_plugin "manageiq-providers-ansible_tower" # can't move this down yet, because we can't autoload ManageIQ::Providers::AnsibleTower::Shared
+manageiq_plugin "manageiq-providers-ansible_tower" # can't move this down yet, because app/models/manageiq/providers/embedded_ansible/automation_manager.rb tries to autoload it
 manageiq_plugin "manageiq-providers-nuage"
 
 # Unmodified gems
