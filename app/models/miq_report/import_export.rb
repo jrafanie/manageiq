@@ -2,7 +2,14 @@ module MiqReport::ImportExport
   extend ActiveSupport::Concern
 
   module ClassMethods
-    VIEWS_FOLDER = File.join(ManageIQ::UI::Classic::Engine.root, "product/views")
+
+    def views_folder
+      @views_folder ||= begin
+        require 'manageiq-ui-classic'
+        File.join(ManageIQ::UI::Classic::Engine.root, "product/views")
+      end
+    end
+
     def import_from_hash(report, options = nil)
       raise _("No Report to Import") if report.nil?
 
@@ -77,7 +84,7 @@ module MiqReport::ImportExport
       if %w(ManageIQ::Providers::CloudManager::Template ManageIQ::Providers::InfraManager::Template
             ManageIQ::Providers::CloudManager::Vm ManageIQ::Providers::InfraManager::Vm VmOrTemplate).include?(db)
         if role && role.settings && role.settings.fetch_path(:restrictions, :vms)
-          viewfilerestricted = "#{VIEWS_FOLDER}/Vm__restricted.yaml"
+          viewfilerestricted = "#{views_folder}/Vm__restricted.yaml"
         end
       end
 
@@ -87,11 +94,11 @@ module MiqReport::ImportExport
 
       # Build the view file name
       if suffix
-        viewfile = "#{VIEWS_FOLDER}/#{db}-#{suffix}.yaml"
-        viewfilebyrole = "#{VIEWS_FOLDER}/#{db}-#{suffix}-#{role}.yaml"
+        viewfile = "#{views_folder}/#{db}-#{suffix}.yaml"
+        viewfilebyrole = "#{views_folder}/#{db}-#{suffix}-#{role}.yaml"
       else
-        viewfile = "#{VIEWS_FOLDER}/#{db}.yaml"
-        viewfilebyrole = "#{VIEWS_FOLDER}/#{db}-#{role}.yaml"
+        viewfile = "#{views_folder}/#{db}.yaml"
+        viewfilebyrole = "#{views_folder}/#{db}-#{role}.yaml"
       end
 
       if viewfilerestricted && File.exist?(viewfilerestricted)
