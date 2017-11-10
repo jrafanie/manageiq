@@ -72,7 +72,7 @@ module ManageIQ
     end
 
     def self.bundle_params
-      "--jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}" if ENV['CI']
+      "--jobs=3 --retry=3" if ENV['CI']
     end
     private_class_method :bundle_params
 
