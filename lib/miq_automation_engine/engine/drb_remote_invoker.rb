@@ -124,6 +124,7 @@ end
 class Exception
   def backtrace_with_evm
     value = backtrace_without_evm
+    return value
     value ? $evm.backtrace(value) : value
   end
 
