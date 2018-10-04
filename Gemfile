@@ -62,7 +62,10 @@ gem "optimist",                       "~>3.0",         :require => false
 gem "pg",                                              :require => false
 gem "pg-dsn_parser",                  "~>0.1.0",       :require => false
 gem "query_relation",                 "~>0.1.0",       :require => false
-gem "rails",                          "~>5.1.6"
+
+# TODO: https://github.com/rails/rails/commit/6ef736625eddf6700f2e67f7849c79c92381abee is on 5-1-stable but not released as of 5.1.6
+# See also: https://github.com/rails/rails/issues/29013
+gem "rails",                          "~>5.1.6",       :git => "https://github.com/rails/rails.git", :branch => "5-1-stable"
 gem "rails-i18n",                     "~>5.x"
 gem "rake",                           ">=11.0",        :require => false
 gem "rest-client",                    "~>2.0.0",       :require => false
