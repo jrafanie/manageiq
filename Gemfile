@@ -21,10 +21,12 @@ def manageiq_plugin(plugin_name)
 end
 
 manageiq_plugin "manageiq-providers-ansible_tower" # can't move this down yet, because we can't autoload ManageIQ::Providers::AnsibleTower::Shared
-manageiq_plugin "manageiq-schema"
+# manageiq_plugin "manageiq-schema"
+gem "manageiq-schema",         :git => "https://github.com/jrafanie/manageiq-schema.git",         :branch => "rails-5-2"
+
 
 # Unmodified gems
-gem "activerecord-id_regions",        "~>0.2.0"
+gem "activerecord-id_regions",        :git => "https://github.com/jrafanie/activerecord-id_regions.git", :branch => "rails-5-1"
 gem "activerecord-session_store",     "~>1.1"
 gem "activerecord-virtual_attributes", "~>1.0.0"
 gem "acts_as_tree",                   "~>2.7" # acts_as_tree needs to be required so that it loads before ancestry
