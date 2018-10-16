@@ -1450,3 +1450,30 @@ describe ChargebackVm do
     include_examples "ChargebackVm", :skip
   end
 end
+
+describe Chargeback::Consumption do
+  context "#hours_in_month" do
+    before do
+      @start_time = Time.parse("2017-10-1 15:53:55 -0400")
+    end
+
+    [
+      [33.days, 720],
+      [32.days, 768],
+      [31.days, 744],
+      [30.days, 720],
+      [29.days, 696],
+      [28.days, 672],
+      [20.days, 720],
+      [5.days,  720]
+    ].each do |duration, expected|
+      it "next #{duration / 1.day}.days" do
+        expect(described_class.new(@start_time, @start_time + duration).hours_in_month).to eq(expected)
+      end
+
+      it "prior #{duration / 1.day}.days" do
+        expect(described_class.new(@start_time - duration, @start_time).hours_in_month).to eq(expected)
+      end
+    end
+  end
+end
