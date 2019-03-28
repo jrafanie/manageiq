@@ -28,7 +28,7 @@ gem "manageiq-schema",         :git => "https://github.com/jrafanie/manageiq-sch
 gem "activerecord-id_regions",        :git => "https://github.com/jrafanie/activerecord-id_regions.git", :branch => "rails-5-1"
 gem "activerecord-session_store",     "~>1.1"
 gem "acts_as_tree",                   "~>2.7" # acts_as_tree needs to be required so that it loads before ancestry
-gem "ancestry",                       "~>3.0.4",       :require => false
+gem "ancestry",                       "~>3.0.4",       :require => false, :github => "jrafanie/ancestry", :branch => "fix_rails_5_1_6_changed_deprecation"
 gem "bcrypt",                         "~> 3.1.10",     :require => false
 gem "bundler",                        ">=1.15",        :require => false
 gem "byebug",                                          :require => false
