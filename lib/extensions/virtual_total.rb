@@ -109,7 +109,7 @@ module VirtualTotal
 
         foreign_table = reflection.klass.arel_table
         # need db access for the keys, so delaying all this lookup until call time
-        join_keys = reflection.join_keys(reflection.klass)
+        join_keys = reflection.method(:join_keys).arity == 1 ? reflection.join_keys(reflection.klass) : reflection.join_keys
         query       = query.where(t[join_keys.foreign_key].eq(foreign_table[join_keys.key]))
 
         arel_column = if method_name == :size

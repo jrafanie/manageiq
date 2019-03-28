@@ -198,7 +198,7 @@ module VirtualDelegates
         if to_ref.macro == :has_one || to_ref.macro == :belongs_to
           blk = ->(arel) { arel.limit = 1 } if to_ref.macro == :has_one
           lambda do |t|
-            join_keys = to_ref.join_keys(to_ref.klass)
+            join_keys = to_ref.method(:join_keys).arity == 1 ? to_ref.join_keys(to_ref.klass) : to_ref.join_keys
             src_model_id = arel_attribute(join_keys.foreign_key, t)
             VirtualDelegates.select_from_alias(to_ref, col, join_keys.key, src_model_id, &blk)
           end
