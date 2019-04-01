@@ -20,7 +20,7 @@ def manageiq_plugin(plugin_name)
   end
 end
 
-manageiq_plugin "manageiq-providers-ansible_tower" # can't move this down yet, because we can't autoload ManageIQ::Providers::AnsibleTower::Shared
+gem "manageiq-providers-ansible_tower", :github => "jrafanie/manageiq-providers-ansible_tower", :branch => "fix_attribute_changed_deprecation" # can't move this down yet, because we can't autoload ManageIQ::Providers::AnsibleTower::Shared
 # manageiq_plugin "manageiq-schema"
 gem "manageiq-schema",         :git => "https://github.com/jrafanie/manageiq-schema.git",         :branch => "rails-5-2"
 
