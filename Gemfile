@@ -25,7 +25,7 @@ gem "manageiq-providers-ansible_tower", :github => "jrafanie/manageiq-providers-
 gem "manageiq-schema",         :git => "https://github.com/jrafanie/manageiq-schema.git",         :branch => "rails-5-2"
 
 # Unmodified gems
-gem "activerecord-virtual_attributes", "~>1.0.0"
+gem "activerecord-virtual_attributes", :github => "ManageIQ/activerecord-virtual_attributes"
 gem "activerecord-id_regions",        :git => "https://github.com/jrafanie/activerecord-id_regions.git", :branch => "rails-5-1"
 gem "activerecord-session_store",     "~>1.1"
 gem "acts_as_tree",                   "~>2.7" # acts_as_tree needs to be required so that it loads before ancestry
