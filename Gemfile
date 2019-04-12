@@ -22,11 +22,11 @@ end
 
 gem "manageiq-providers-ansible_tower", :github => "jrafanie/manageiq-providers-ansible_tower", :branch => "fix_attribute_changed_deprecation" # can't move this down yet, because we can't autoload ManageIQ::Providers::AnsibleTower::Shared
 # manageiq_plugin "manageiq-schema"
-gem "manageiq-schema",         :git => "https://github.com/jrafanie/manageiq-schema.git",         :branch => "rails-5-2"
+gem "manageiq-schema",         :git => "https://github.com/jrafanie/manageiq-schema.git",         :branch => "support_rails_5_1"
 
 # Unmodified gems
 gem "activerecord-virtual_attributes", :github => "ManageIQ/activerecord-virtual_attributes"
-gem "activerecord-id_regions",        :git => "https://github.com/jrafanie/activerecord-id_regions.git", :branch => "rails-5-1"
+gem "activerecord-id_regions",        :git => "https://github.com/jrafanie/activerecord-id_regions.git", :branch => "support_rails_5_1_and_higher"
 gem "activerecord-session_store",     "~>1.1"
 gem "acts_as_tree",                   "~>2.7" # acts_as_tree needs to be required so that it loads before ancestry
 gem "ancestry",                       "~>3.0.4",       :require => false, :github => "jrafanie/ancestry", :branch => "fix_rails_5_1_6_changed_deprecation"
