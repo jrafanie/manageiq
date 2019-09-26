@@ -250,6 +250,10 @@ unless ENV["APPLIANCE"]
     gem "capybara",         "~>2.5.0",  :require => false
     gem "coveralls",                    :require => false
     gem "factory_bot",      "~>5.1",    :require => false
+
+    # TODO: manageiq-providers-lenovo was resolved to 0.2.0, which depends on
+    # xclarity_client (~> 0.6.0) was resolved to 0.6.7, which depends on
+    #    faker (~> 1.8.3)
     gem "faker",            "~>1.8",    :require => false
     gem "timecop",          "~>0.9",    :require => false
     gem "vcr",              "~>5.0",    :require => false
