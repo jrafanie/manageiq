@@ -353,7 +353,7 @@ class MiqWorker < ApplicationRecord
 
     require 'awesome_spawn'
     cmd = "#{Gem.ruby} #{runner_script}"
-    cmd = "nice #{nice_increment} #{cmd}" if ENV["APPLIANCE"]
+    cmd = "nice -n #{nice_increment} #{cmd}" if ENV["APPLIANCE"]
 
     options = {:guid => guid, :heartbeat => nil}
     if ems_id
@@ -373,6 +373,7 @@ class MiqWorker < ApplicationRecord
   end
 
   def start_runner_via_spawn
+    _log.info("Starting #{command_line}")
     pid = Kernel.spawn(command_line, [:out, :err] => [Rails.root.join("log", "evm.log"), "a"])
     Process.detach(pid)
     pid
