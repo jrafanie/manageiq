@@ -69,7 +69,9 @@ MIQ_WORKER_TYPES = {
   "MiqSmartProxyWorker"                                                         => %i(manageiq_default),
   "MiqUiWorker"                                                                 => %i(manageiq_default ui_dependencies graphql_api),
   "MiqVimBrokerWorker"                                                          => %i(manageiq_default),
-  "MiqWebServiceWorker"                                                         => %i(manageiq_default graphql_api),
+# Api can look for an existing UI session token, which can have serialialized ui-classic controller classes:
+# sandboxes;FC:-ActiveSupport::HashWithIndifferentAccess{I"dashboard;FC;q{I"perf_options;FS:0ApplicationController::Performance::Options$typ0:daily_date0:hourly_date0: days0:
+  "MiqWebServiceWorker"                                                         => %i(manageiq_default ui_dependencies graphql_api),
   "MiqRemoteConsoleWorker"                                                      => %i(manageiq_default),
 }.freeze
 
