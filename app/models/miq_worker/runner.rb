@@ -415,6 +415,8 @@ class MiqWorker::Runner
       gc_meth = gc_time >= 5 ? :warn : :debug
       $log.send(gc_meth, "#{log_prefix} Garbage collection took #{gc_time} seconds")
       @last_gc = t
+      require 'malloc_trim'
+      MallocTrim.trim # most effective when doing a GC.start before
     end
   end
 
