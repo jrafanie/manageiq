@@ -9,7 +9,7 @@ require File.join(Bundler::Plugin.index.load_paths("bundler-inject")[0], "bundle
 #
 # VMDB specific gems
 #
-gem "manageiq-gems-pending", ">0", :require => 'manageiq-gems-pending', :git => "https://github.com/ManageIQ/manageiq-gems-pending.git", :branch => "master"
+gem "manageiq-gems-pending", ">0", :require => 'manageiq-gems-pending', :git => "https://github.com/NickLaMuro/manageiq-gems-pending.git", :branch => "rails-6"
 
 # Modified gems for gems-pending.  Setting sources here since they are git references
 gem "handsoap", "=0.2.5.5", :require => false, :source => "https://rubygems.manageiq.org"
@@ -21,7 +21,8 @@ def manageiq_plugin(plugin_name)
   end
 end
 
-manageiq_plugin "manageiq-schema"
+gem "manageiq-schema", :git    => "https://github.com/NickLaMuro/manageiq-schema",
+                       :branch => "rails-6"
 
 # Unmodified gems
 gem "activerecord-virtual_attributes", "~>2.0.0"
@@ -43,7 +44,7 @@ gem "gettext_i18n_rails",             "~>1.7.2"
 gem "gettext_i18n_rails_js",          "~>1.3.0"
 gem "hamlit",                         "~>2.8.5"
 gem "inifile",                        "~>3.0",         :require => false
-gem "inventory_refresh",              "~>0.2.0",       :require => false
+gem "inventory_refresh",                               :git     => "https://github.com/NickLaMuro/inventory_refresh", :branch => "rails-6"
 gem "kubeclient",                     "~>4.0",         :require => false # For scaling pods at runtime
 gem "linux_admin",                    "~>2.0", ">=2.0.1", :require => false
 gem "listen",                         "~>3.2",         :require => false
@@ -52,7 +53,7 @@ gem "manageiq-api-client",            "~>0.3.4",       :require => false
 gem "manageiq-loggers",               "~>0.5.0",       :require => false
 gem "manageiq-messaging",             "~>0.1.4",       :require => false
 gem "manageiq-password",              "~>0.3",         :require => false
-gem "manageiq-postgres_ha_admin",     "~>3.1",         :require => false
+gem "manageiq-postgres_ha_admin",                      :git     => "https://github.com/NickLaMuro/manageiq-postgres_ha_admin", :branch => "rails-6"
 gem "manageiq-ssh-util",              "~>0.1.1",       :require => false
 gem "memoist",                        "~>0.16.0",      :require => false
 gem "mime-types",                     "~>3.0",         :path => File.expand_path("mime-types-redirector", __dir__)
@@ -89,6 +90,10 @@ gem "ruport",                         "=1.7.0.3",  :source => "https://rubygems.
 # See miq_expression_spec Date/Time Support examples.
 # https://github.com/jeremyevans/ruby-american_date
 gem "american_date"
+
+# Rails 6 branch patches (DO NOT MERGE!)
+gem "activerecord-id_regions", :git    => "https://github.com/NickLaMuro/activerecord-id_regions",
+                               :branch => "rails-6"
 
 # Make sure to tag your new bundler group with the manageiq_default group in addition to your specific bundler group name.
 # This default is used to automatically require all of our gems in processes that don't specify which bundler groups they want.
@@ -169,12 +174,14 @@ group :openshift, :manageiq_default do
 end
 
 group :openstack, :manageiq_default do
-  manageiq_plugin "manageiq-providers-openstack"
+  gem "manageiq-providers-openstack", :git    => "https://github.com/NickLaMuro/manageiq-providers-openstack",
+                                      :branch => "rails-6"
 end
 
 group :ovirt, :manageiq_default do
   manageiq_plugin "manageiq-providers-ovirt"
-  gem "ovirt_metrics",                  "~>3.0.1",       :require => false
+  gem "ovirt_metrics", :git    => "https://github.com/NickLaMuro/ovirt_metrics",
+                       :branch => "rails-6"
 end
 
 group :scvmm, :manageiq_default do
@@ -183,6 +190,8 @@ end
 
 group :vmware, :manageiq_default do
   manageiq_plugin "manageiq-providers-vmware"
+  gem "vmware_web_service", :git    => "https://github.com/NickLaMuro/vmware_web_service",
+                            :branch => "rails-6"
 end
 
 ### shared dependencies
@@ -204,11 +213,11 @@ group :rest_api, :manageiq_default do
   manageiq_plugin "manageiq-api"
 end
 
-group :graphql_api do
-  # Note, you still need to mount the engine in the UI / rest api processes:
-  # mount ManageIQ::GraphQL::Engine, :at => '/graphql'
-  manageiq_plugin "manageiq-graphql"
-end
+# group :graphql_api do
+#   # Note, you still need to mount the engine in the UI / rest api processes:
+#   # mount ManageIQ::GraphQL::Engine, :at => '/graphql'
+#   manageiq_plugin "manageiq-graphql"
+# end
 
 group :scheduler, :manageiq_default do
   gem "rufus-scheduler"
@@ -230,7 +239,8 @@ end
 
 group :ui_dependencies do # Added to Bundler.require in config/application.rb
   manageiq_plugin "manageiq-decorators"
-  manageiq_plugin "manageiq-ui-classic"
+  gem "manageiq-ui-classic",                        :git    => "https://github.com/NickLaMuro/manageiq-ui-classic",
+                                                    :branch => "rails-6"
   # Modified gems (forked on Github)
   gem "jquery-rjs",                     "=0.1.1.1", :source => "https://rubygems.manageiq.org"
 end
