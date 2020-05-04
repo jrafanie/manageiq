@@ -25,7 +25,7 @@ manageiq_plugin "manageiq-schema"
 
 # Unmodified gems
 gem "activerecord-virtual_attributes", "~>2.0.0"
-gem "activerecord-session_store",     "~>1.1"
+gem "activerecord-session_store",     "~>1.1.3"
 gem "acts_as_tree",                   "~>2.7" # acts_as_tree needs to be required so that it loads before ancestry
 gem "ancestry",                       "~>3.0.7",       :require => false
 gem "aws-sdk-s3",                     "~>1.0",         :require => false # For FileDepotS3
@@ -66,8 +66,8 @@ gem "pg",                                              :require => false
 gem "pg-dsn_parser",                  "~>0.1.0",       :require => false
 gem "psych",                          "~>3.1",         :require => false # This can be dropped once we drop ruby 2.5
 gem "query_relation",                 "~>0.1.0",       :require => false
-gem "rails",                          "~>5.2.4", ">=5.2.4.4"
-gem "rails-i18n",                     "~>5.x"
+gem "rails",                          "~>6.0.0"
+gem "rails-i18n",                     "~>6.x"
 gem "rake",                           ">=12.3.3",      :require => false
 gem "rest-client",                    "~>2.1.0",       :require => false
 gem "ripper_ruby_parser",             "~>1.5.1",       :require => false
@@ -241,7 +241,7 @@ end
 
 group :web_server, :manageiq_default do
   gem "puma",                           "~>4.2"
-  gem "responders",                     "~>2.0"
+  gem "responders",                     "~>3.0"
   gem "ruby-dbus" # For external auth
   gem "secure_headers",                 "~>3.9"
 end
@@ -282,6 +282,6 @@ unless ENV["APPLIANCE"]
 
   group :development, :test do
     gem "parallel_tests"
-    gem "rspec-rails", "~>3.9.0"
+    gem "rspec-rails", "~>4.0.0"
   end
 end
