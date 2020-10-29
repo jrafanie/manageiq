@@ -60,8 +60,10 @@ end
 opt_parser.parse!
 worker_class = ARGV[0]
 
-puts "** Booting #{worker_class} with PID: #{Process.pid}#{" and options: #{options.inspect}" if options.any?}..." unless options[:list]
+require 'time'
+puts "** #{Time.now.utc.iso8601(6)} Booting #{worker_class} with PID: #{Process.pid}#{" and options: #{options.inspect}" if options.any?}..." unless options[:list]
 require File.expand_path("../../../config/environment", __dir__)
+$log.info("config/environment loaded")
 
 if options[:list]
   puts MiqWorkerType.pluck(:worker_type)
@@ -69,6 +71,7 @@ if options[:list]
 end
 opt_parser.abort(opt_parser.help) unless worker_class
 
+$log.info("Checking MiqWorkerType...")
 unless MiqWorkerType.find_by(:worker_type => worker_class)
   STDERR.puts "ERR:  `#{worker_class}` WORKER CLASS NOT FOUND!  Please run with `-l` to see possible worker class names."
   exit 1
@@ -84,13 +87,21 @@ if options[:roles].present?
   MiqServer.my_server.activate_roles(MiqServer.my_server.server_role_names)
 end
 
+$log.info("constantizing #{worker_class}...")
 worker_class = worker_class.constantize
+
+$log.info("#{worker_class}.has_required_role?...")
 unless worker_class.has_required_role?
   STDERR.puts "ERR:  Server roles are not sufficient for `#{worker_class}` worker."
   exit 1
 end
 
-worker_class.preload_for_worker_role if worker_class.respond_to?(:preload_for_worker_role)
+if worker_class.respond_to?(:preload_for_worker_role)
+  $log.info("#{worker_class}.preload_for_worker_role...")
+  worker_class.preload_for_worker_role
+  $log.info("#{worker_class}.preload_for_worker_role...COMPLETE")
+end
+
 unless options[:dry_run]
   create_options = {:pid => Process.pid}
   runner_options = {}
@@ -105,13 +116,20 @@ unless options[:dry_run]
                wrkr.update(:pid => Process.pid)
              end
            else
-             worker_class.create_worker_record(create_options)
+             $log.info("create_worker_record #{worker_class} with options: #{create_options}...")
+             worker_class.create_worker_record(create_options).tap { $log.info("create_worker_record #{worker_class}...COMPLETE") }
            end
 
   begin
     runner_options[:guid] = worker.guid
     $log.info("Starting #{worker.class.name} with runner options #{runner_options}")
-    worker.class::Runner.new(runner_options).tap(&:setup_sigterm_trap).start
+
+    $log.info("Initializing #{worker.class.name}::Runner...")
+    runner = worker.class::Runner.new(runner_options)
+    $log.info("runner.setup_sigterm_trap...")
+    runner.setup_sigterm_trap
+    $log.info("runner.start...")
+    runner.start
   rescue SystemExit
     raise
   rescue Exception => err
