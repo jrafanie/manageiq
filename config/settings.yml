@@ -1077,13 +1077,13 @@
   :worker_base:
     :defaults:
       :count: 1
-      :cpu_request_percent: 25
-      :cpu_threshold_percent: 50
+      :cpu_request_percent: 15
+      :cpu_threshold_percent: 100
       :gc_interval: 15.minutes
       :heartbeat_freq: 10.seconds
       :heartbeat_timeout: 2.minutes
-      :memory_request: 250.megabytes
-      :memory_threshold: 400.megabytes
+      :memory_request: 500.megabytes
+      :memory_threshold: 1.gigabytes
       :nice_delta: 10
       :parent_time_threshold: 3.minutes
       :poll: 3.seconds
@@ -1105,7 +1105,6 @@
         :flooding_monitor_enabled: false
         :ems_event_page_size: 100
         :ems_event_thread_shutdown_timeout: 10.seconds
-        :memory_threshold: 2.gigabytes
         :nice_delta: 1
         :poll: 1.seconds
       :event_catcher_ansible_tower:
@@ -1119,25 +1118,21 @@
     :queue_worker_base:
       :defaults:
         :dequeue_method: :drb
-        :memory_threshold: 600.megabytes
         :poll_method: :normal
         :queue_timeout: 10.minutes
       :ems_metrics_collector_worker:
         :defaults:
           :count: 2
-          :memory_threshold: 600.megabytes
           :nice_delta: 3
           :poll_method: :escalate
         :ems_metrics_collector_worker_google: {}
       :ems_metrics_processor_worker:
         :count: 2
-        :memory_threshold: 800.megabytes
         :nice_delta: 7
         :poll_method: :escalate
       :ems_operations_worker: {}
       :ems_refresh_worker:
         :defaults:
-          :memory_threshold: 2.gigabytes
           :nice_delta: 7
           :poll: 10.seconds
           :poll_method: :normal
@@ -1155,7 +1150,6 @@
       :generic_worker:
         :count: 2
       :priority_worker:
-        :memory_threshold: 600.megabytes
         :count: 2
         :nice_delta: 1
         :poll: 1.seconds
@@ -1164,7 +1158,6 @@
         :nice_delta: 7
       :smart_proxy_worker:
         :count: 2
-        :memory_threshold: 2.gigabytes
         :queue_timeout: 20.minutes
         :heartbeat_thread_shutdown_timeout: 10.seconds
     :schedule_worker:
@@ -1185,7 +1178,6 @@
       :job_proxy_dispatcher_stale_message_timeout: 2.minutes
       :job_timeout_interval: 60.seconds
       :log_active_configuration_interval: 1.days
-      :memory_threshold: 500.megabytes
       :nice_delta: 3
       :notifications_purge_interval: 1.day
       :orchestration_stack_retired_interval: 10.minutes
@@ -1212,15 +1204,12 @@
       :yum_update_check: 12.hours
     :ui_worker:
       :connection_pool_size: 8
-      :memory_threshold: 1.gigabytes
       :nice_delta: 1
     :web_service_worker:
       :connection_pool_size: 8
-      :memory_threshold: 1.gigabytes
       :nice_delta: 1
     :remote_console_worker:
       :connection_pool_size: 14
-      :memory_threshold: 1.gigabytes
       :nice_delta: 1
     :cockpit_ws_worker:
       :count: 1
