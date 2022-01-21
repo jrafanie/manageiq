@@ -25,47 +25,47 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
 
   context "check we can load network records from the DB" do
     it "finds in one batch after the scanning" do
-      lazy_find_vm1        = persister.vms.lazy_find(:ems_ref => vm_data(1)[:ems_ref])
-      lazy_find_vm2        = persister.vms.lazy_find(:ems_ref => vm_data(2)[:ems_ref])
-      lazy_find_vm60       = persister.vms.lazy_find(:ems_ref => vm_data(60)[:ems_ref])
-      lazy_find_hardware1  = persister.hardwares.lazy_find(:vm_or_template => lazy_find_vm1)
-      lazy_find_hardware2  = persister.hardwares.lazy_find(:vm_or_template => lazy_find_vm2)
-      lazy_find_hardware60 = persister.hardwares.lazy_find(:vm_or_template => lazy_find_vm60)
+      lazy_find_vm1        = persister.vms.lazy_find({:ems_ref => vm_data(1)[:ems_ref]})
+      lazy_find_vm2        = persister.vms.lazy_find({:ems_ref => vm_data(2)[:ems_ref]})
+      lazy_find_vm60       = persister.vms.lazy_find({:ems_ref => vm_data(60)[:ems_ref]})
+      lazy_find_hardware1  = persister.hardwares.lazy_find({:vm_or_template => lazy_find_vm1})
+      lazy_find_hardware2  = persister.hardwares.lazy_find({:vm_or_template => lazy_find_vm2})
+      lazy_find_hardware60 = persister.hardwares.lazy_find({:vm_or_template => lazy_find_vm60})
 
       lazy_find_network1 = persister.networks.lazy_find(
         {:hardware => lazy_find_hardware1, :description => "public"},
-        {:key     => :hostname,
-         :default => 'default_value_unknown'}
+        :key     => :hostname,
+        :default => 'default_value_unknown'
       )
       lazy_find_network2 = persister.networks.lazy_find(
         {:hardware => lazy_find_hardware2, :description => "public"},
-        {:key     => :hostname,
-         :default => 'default_value_unknown'}
+        :key     => :hostname,
+        :default => 'default_value_unknown'
       )
       lazy_find_network60 = persister.networks.lazy_find(
         {:hardware => lazy_find_hardware60, :description => "public"},
-        {:key     => :hostname,
-         :default => 'default_value_unknown'}
+        :key     => :hostname,
+        :default => 'default_value_unknown'
       )
 
       @vm_data101 = vm_data(101).merge(
-        :flavor           => persister.flavors.lazy_find(:ems_ref => flavor_data(1)[:name]),
-        :genealogy_parent => persister.miq_templates.lazy_find(:ems_ref => image_data(1)[:ems_ref]),
-        :key_pairs        => [persister.auth_key_pairs.lazy_find(:name => key_pair_data(1)[:name])],
+        :flavor           => persister.flavors.lazy_find({:ems_ref => flavor_data(1)[:name]}),
+        :genealogy_parent => persister.miq_templates.lazy_find({:ems_ref => image_data(1)[:ems_ref]}),
+        :key_pairs        => [persister.auth_key_pairs.lazy_find({:name => key_pair_data(1)[:name]})],
         :location         => lazy_find_network1,
       )
 
       @vm_data102 = vm_data(102).merge(
-        :flavor           => persister.flavors.lazy_find(:ems_ref => flavor_data(1)[:name]),
-        :genealogy_parent => persister.miq_templates.lazy_find(:ems_ref => image_data(1)[:ems_ref]),
-        :key_pairs        => [persister.auth_key_pairs.lazy_find(:name => key_pair_data(1)[:name])],
+        :flavor           => persister.flavors.lazy_find({:ems_ref => flavor_data(1)[:name]}),
+        :genealogy_parent => persister.miq_templates.lazy_find({:ems_ref => image_data(1)[:ems_ref]}),
+        :key_pairs        => [persister.auth_key_pairs.lazy_find({:name => key_pair_data(1)[:name]})],
         :location         => lazy_find_network2,
       )
 
       @vm_data160 = vm_data(160).merge(
-        :flavor           => persister.flavors.lazy_find(:ems_ref => flavor_data(1)[:name]),
-        :genealogy_parent => persister.miq_templates.lazy_find(:ems_ref => image_data(1)[:ems_ref]),
-        :key_pairs        => [persister.auth_key_pairs.lazy_find(:name => key_pair_data(1)[:name])],
+        :flavor           => persister.flavors.lazy_find({:ems_ref => flavor_data(1)[:name]}),
+        :genealogy_parent => persister.miq_templates.lazy_find({:ems_ref => image_data(1)[:ems_ref]}),
+        :key_pairs        => [persister.auth_key_pairs.lazy_find({:name => key_pair_data(1)[:name]})],
         :location         => lazy_find_network60,
       )
 
@@ -96,16 +96,16 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
     end
 
     it "finds one by one before we scan" do
-      lazy_find_vm1        = persister.vms.lazy_find(:ems_ref => vm_data(1)[:ems_ref])
-      lazy_find_vm2        = persister.vms.lazy_find(:ems_ref => vm_data(2)[:ems_ref])
-      lazy_find_vm60       = persister.vms.lazy_find(:ems_ref => vm_data(60)[:ems_ref])
-      lazy_find_hardware1  = persister.hardwares.lazy_find(:vm_or_template => lazy_find_vm1)
-      lazy_find_hardware2  = persister.hardwares.lazy_find(:vm_or_template => lazy_find_vm2)
-      lazy_find_hardware60 = persister.hardwares.lazy_find(:vm_or_template => lazy_find_vm60)
+      lazy_find_vm1        = persister.vms.lazy_find({:ems_ref => vm_data(1)[:ems_ref]})
+      lazy_find_vm2        = persister.vms.lazy_find({:ems_ref => vm_data(2)[:ems_ref]})
+      lazy_find_vm60       = persister.vms.lazy_find({:ems_ref => vm_data(60)[:ems_ref]})
+      lazy_find_hardware1  = persister.hardwares.lazy_find({:vm_or_template => lazy_find_vm1})
+      lazy_find_hardware2  = persister.hardwares.lazy_find({:vm_or_template => lazy_find_vm2})
+      lazy_find_hardware60 = persister.hardwares.lazy_find({:vm_or_template => lazy_find_vm60})
       # Assert the local db index is empty if we do not load the reference
       expect(persister.networks.index_proxy.send(:local_db_indexes)[:manager_ref].send(:index)).to be_nil
 
-      network1 = persister.networks.lazy_find(:hardware => lazy_find_hardware1, :description => "public").load
+      network1 = persister.networks.lazy_find({:hardware => lazy_find_hardware1, :description => "public"}).load
       # Assert all references are one by one
       expect(persister.networks.index_proxy.send(:local_db_indexes)[:manager_ref].send(:index).keys).to(
         match_array(
@@ -114,7 +114,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           ]
         )
       )
-      network2 = persister.networks.find(:hardware => lazy_find_hardware2, :description => "public")
+      network2 = persister.networks.find({:hardware => lazy_find_hardware2, :description => "public"})
       expect(persister.networks.index_proxy.send(:local_db_indexes)[:manager_ref].send(:index).keys).to(
         match_array(
           [
@@ -123,7 +123,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           ]
         )
       )
-      network60 = persister.networks.find(:hardware => lazy_find_hardware60, :description => "public")
+      network60 = persister.networks.find({:hardware => lazy_find_hardware60, :description => "public"})
       expect(persister.networks.index_proxy.send(:local_db_indexes)[:manager_ref].send(:index).keys).to(
         match_array(
           [
@@ -144,10 +144,10 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
   context "check we can load stack resource records from the DB" do
     it "finds in one batch after the scanning" do
       lazy_find_stack_1_11 = persister.orchestration_stacks.lazy_find(
-        :ems_ref => orchestration_stack_data("1_11")[:ems_ref]
+        {:ems_ref => orchestration_stack_data("1_11")[:ems_ref]}
       )
       lazy_find_stack_1_12 = persister.orchestration_stacks.lazy_find(
-        :ems_ref => orchestration_stack_data("1_12")[:ems_ref]
+        {:ems_ref => orchestration_stack_data("1_12")[:ems_ref]}
       )
 
       # Assert the local db index is empty if we do not load the reference
@@ -158,29 +158,29 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_1")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       )
       stack_resource_1_11_2 = persister.orchestration_stacks_resources.lazy_find(
         {
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_2")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       )
       stack_resource_1_11_3 = persister.orchestration_stacks_resources.lazy_find(
         {
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_3")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       )
       stack_1_12 = persister.orchestration_stacks_resources.lazy_find(
         {
           :stack   => lazy_find_stack_1_12,
           :ems_ref => orchestration_stack_resource_data("1_12_1")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref,
-         :key => :stack},
+        :ref => :by_stack_and_ems_ref,
+        :key => :stack,
       )
 
       @network_port1 = network_port_data(1).merge(
@@ -223,7 +223,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_3")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       ).load
 
       expect(persister.orchestration_stacks_resources.index_proxy.send(:local_db_indexes)[:by_stack_and_ems_ref].send(:index).keys).to(
@@ -244,10 +244,10 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
 
     it "finds one by one before we scan" do
       lazy_find_stack_1_11 = persister.orchestration_stacks.lazy_find(
-        :ems_ref => orchestration_stack_data("1_11")[:ems_ref]
+        {:ems_ref => orchestration_stack_data("1_11")[:ems_ref]}
       )
       lazy_find_stack_1_12 = persister.orchestration_stacks.lazy_find(
-        :ems_ref => orchestration_stack_data("1_12")[:ems_ref]
+        {:ems_ref => orchestration_stack_data("1_12")[:ems_ref]}
       )
 
       # Assert the local db index is empty if we do not load the reference
@@ -258,7 +258,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_1")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       )
 
       # Assert all references are one by one
@@ -275,7 +275,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_2")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       ).load
 
       expect(persister.orchestration_stacks_resources.index_proxy.send(:local_db_indexes)[:by_stack_and_ems_ref].send(:index).keys).to(
@@ -292,7 +292,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           :stack   => lazy_find_stack_1_11,
           :ems_ref => orchestration_stack_resource_data("1_11_3")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref}
+        :ref => :by_stack_and_ems_ref
       ).load
 
       expect(persister.orchestration_stacks_resources.index_proxy.send(:local_db_indexes)[:by_stack_and_ems_ref].send(:index).keys).to(
@@ -309,8 +309,8 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
           :stack   => lazy_find_stack_1_12,
           :ems_ref => orchestration_stack_resource_data("1_12_1")[:ems_ref]
         },
-        {:ref => :by_stack_and_ems_ref,
-         :key => :stack},
+        :ref => :by_stack_and_ems_ref,
+        :key => :stack,
       ).load
 
       expect(persister.orchestration_stacks_resources.index_proxy.send(:local_db_indexes)[:by_stack_and_ems_ref].send(:index).keys).to(
@@ -334,7 +334,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
 
   context "check secondary indexes on Vms" do
     it "finds Vm by name" do
-      vm1 = persister.vms.lazy_find({:name => vm_data(1)[:name]}, {:ref => :by_name}).load
+      vm1 = persister.vms.lazy_find({:name => vm_data(1)[:name]}, :ref => :by_name).load
       expect(vm1[:ems_ref]).to eq "vm_ems_ref_1"
 
       expect(persister.vms.index_proxy.send(:local_db_indexes)[:by_name].send(:index).keys).to(
@@ -345,7 +345,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
         )
       )
 
-      vm1 = persister.vms.find({:name => vm_data(1)[:name]}, {:ref => :by_name})
+      vm1 = persister.vms.find({:name => vm_data(1)[:name]}, :ref => :by_name)
       expect(vm1[:ems_ref]).to eq "vm_ems_ref_1"
 
       expect(persister.vms.index_proxy.send(:local_db_indexes)[:by_name].send(:index).keys).to(
@@ -358,7 +358,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
     end
 
     it "finds Vm by uid_ems and name" do
-      vm1 = persister.vms.lazy_find({:name => vm_data(1)[:name], :uid_ems => vm_data(1)[:uid_ems]}, {:ref => :by_uid_ems_and_name}).load
+      vm1 = persister.vms.lazy_find({:name => vm_data(1)[:name], :uid_ems => vm_data(1)[:uid_ems]}, :ref => :by_uid_ems_and_name).load
       expect(vm1[:ems_ref]).to eq "vm_ems_ref_1"
 
       expect(persister.vms.index_proxy.send(:local_db_indexes)[:by_uid_ems_and_name].send(:index).keys).to(
@@ -369,7 +369,7 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
         )
       )
 
-      vm1 = persister.vms.find({:uid_ems => vm_data(1)[:uid_ems], :name => vm_data(1)[:name]}, {:ref => :by_uid_ems_and_name})
+      vm1 = persister.vms.find({:uid_ems => vm_data(1)[:uid_ems], :name => vm_data(1)[:name]}, :ref => :by_uid_ems_and_name)
       expect(vm1[:ems_ref]).to eq "vm_ems_ref_1"
 
       expect(persister.vms.index_proxy.send(:local_db_indexes)[:by_uid_ems_and_name].send(:index).keys).to(
@@ -384,14 +384,14 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
 
   context "check secondary index with polymorphic relation inside" do
     it "will fail trying to build query using polymorphic column as index" do
-      lazy_find_vm1 = persister.vms.lazy_find(:ems_ref => vm_data(1)[:ems_ref])
+      lazy_find_vm1 = persister.vms.lazy_find({:ems_ref => vm_data(1)[:ems_ref]})
 
       # TODO(lsmola) Will we need to search by polymorphic columns? We do not do that now in any refresh. By design,
       # polymoprhic columns can't do join (they can, only for 1 table). Maybe union of 1 table joins using polymorphic
       # relations?
       # TODO(lsmola) We should probably assert this sooner? Now we are getting a failure trying to add :device in
       # .includes
-      expect { persister.network_ports.lazy_find({:device => lazy_find_vm1}, {:ref => :by_device}).load }.to(
+      expect { persister.network_ports.lazy_find({:device => lazy_find_vm1}, :ref => :by_device).load }.to(
         raise_error(ActiveRecord::EagerLoadPolymorphicError,
                     "Cannot eagerly load the polymorphic association :device")
       )
