@@ -247,7 +247,7 @@ end
 
 group :ui_dependencies do # Added to Bundler.require in config/application.rb
   manageiq_plugin "manageiq-decorators"
-  manageiq_plugin "manageiq-ui-classic"
+  gem "manageiq-ui-classic", :git => "https://github.com/jrafanie/manageiq-ui-classic.git", :branch => "use_default_lazy_loaded_uglifier"
   # Modified gems (forked on Github)
   gem "jquery-rjs",                     "=0.1.1.2",          :source => "https://rubygems.manageiq.org"
 end
