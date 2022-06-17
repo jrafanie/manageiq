@@ -1,5 +1,5 @@
 raise "Ruby versions < 2.6.0 are unsupported!" if RUBY_VERSION < "2.6.0"
-raise "Ruby versions >= 3.0.0 are unsupported!" if RUBY_VERSION >= "3.0.0"
+raise "Ruby versions >= 3.1.0 are unsupported!" if RUBY_VERSION >= "3.1.0"
 
 source 'https://rubygems.org'
 
@@ -42,7 +42,7 @@ gem "gettext_i18n_rails",               "~>1.7.2"
 gem "gettext_i18n_rails_js",            "~>1.3.0"
 gem "hamlit",                           "~>2.11.0"
 gem "inifile",                          "~>3.0",             :require => false
-gem "inventory_refresh",                "~>1.0",             :require => false
+gem "inventory_refresh",                "~>1.1.0",           :require => false
 gem "kubeclient",                       "~>4.0",             :require => false # For scaling pods at runtime
 gem "linux_admin",                      "~>2.0", ">=2.0.1",  :require => false
 gem "listen",                           "~>3.2",             :require => false
@@ -85,7 +85,7 @@ gem "mime-types",                       "~>3.0",             :require => false, 
 
 # Modified gems (forked on Github)
 gem "handsoap",                         "=0.2.5.5",          :require => false, :source => "https://rubygems.manageiq.org" # for manageiq-gems-pending only
-gem "ruport",                           "=1.7.0.3",                             :source => "https://rubygems.manageiq.org"
+gem "ruport", :git => "https://github.com/jrafanie/ruport.git", :branch => "bump_prawn_for_ruby3_support"
 
 # In 1.9.3: Time.parse uses british version dd/mm/yyyy instead of american version mm/dd/yyyy
 # american_date fixes this to be compatible with 1.8.7 until all callers can be converted to the 1.9.3 format prior to parsing.
@@ -257,7 +257,7 @@ group :ui_dependencies do # Added to Bundler.require in config/application.rb
   manageiq_plugin "manageiq-decorators"
   manageiq_plugin "manageiq-ui-classic"
   # Modified gems (forked on Github)
-  gem "jquery-rjs",                     "=0.1.1.2",          :source => "https://rubygems.manageiq.org"
+  gem "jquery-rjs",                     "=0.1.1.2", :git => "https://github.com/jrafanie/jquery-rjs.git", :branch => "jquery_rjs_0_1_1_ruby3"
 end
 
 group :web_server, :manageiq_default do
