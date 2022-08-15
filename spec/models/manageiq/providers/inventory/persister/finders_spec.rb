@@ -62,16 +62,6 @@ RSpec.describe ManageIQ::Providers::Inventory::Persister do
     # This passes nicely
     lazy_vm = persister.vms.lazy_find({:name => "name"}, :ref => :by_name)
     expect(lazy_vm.reference.full_reference).to eq(:name => "name")
-
-    # TODO(lsmola) But this fails, since it takes the whole hash as 1st arg, it should correctly raise invalid format
-    expected_error = "Finder has missing keys for index :manager_ref, missing indexes are: [:ems_ref]"
-    expect do
-      persister.vms.lazy_find({:name => "name", :ref => :by_name})
-    end.to(raise_error(expected_error))
-
-    # TODO(lsmola) And this doesn't fail, but the :key is silently ignored, it should also raise invalid format
-    lazy_vm = persister.vms.lazy_find({:ems_ref => "ems_ref_1", :key => :name})
-    expect(lazy_vm.reference.full_reference).to eq(:ems_ref => "ems_ref_1", :key => :name)
   end
 
   it "checks passing more keys to index passes just fine" do
