@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: manageiq 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 12:41-0400\n"
-"PO-Revision-Date: 2022-11-04 12:41-0400\n"
+"POT-Creation-Date: 2022-11-15 00:35+0000\n"
+"PO-Revision-Date: 2022-11-15 00:35+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -9039,6 +9039,10 @@ msgstr ""
 msgid "Bootable?"
 msgstr ""
 
+#: ../app/javascript/components/timeline-options/timeline-options.jsx:43
+msgid "Both"
+msgstr ""
+
 #. TRANSLATORS: en.yml key: dictionary.model.BottleneckEvent
 #: ../config/model_display_names.rb:14 ../config/dictionary_strings.rb:2682
 msgid "Bottleneck Event"
@@ -12892,7 +12896,7 @@ msgid "Cloud Services"
 msgstr ""
 
 #. TRANSLATORS: file: product/views/CloudSubnet.yaml
-#: ../app/helpers/vm_helper.rb:29 ../config/yaml_strings.rb:556
+#: ../app/helpers/vm_helper.rb:31 ../config/yaml_strings.rb:556
 msgid "Cloud Subnet"
 msgstr ""
 
@@ -19722,7 +19726,7 @@ msgid "Core"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:168
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:169
 msgid "Core Type"
 msgstr ""
 
@@ -30614,8 +30618,8 @@ msgstr ""
 msgid "Enforce Affinity Check"
 msgstr ""
 
-#: ../app/javascript/components/tenant-quota-form/helper.js:74
-#: ../app/javascript/components/tenant-quota-form/helper.js:75
+#: ../app/javascript/components/tenant-quota-form/helper.js:76
+#: ../app/javascript/components/tenant-quota-form/helper.js:77
 msgid "Enforce a Value"
 msgstr ""
 
@@ -33119,7 +33123,7 @@ msgstr ""
 msgid "Failover"
 msgstr ""
 
-#: ../app/models/miq_policy.rb:15
+#: ../app/javascript/components/timeline-options/timeline-options.jsx:42
 msgid "Failure"
 msgstr ""
 
@@ -37724,7 +37728,7 @@ msgid "IBM Cloud Activity Tracker Instance Service Key"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:179
+#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:180
 msgid "IBM Cloud Block-Storage Volume"
 msgstr ""
 
@@ -42216,7 +42220,7 @@ msgid "Memory %"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:151
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:152
 msgid "Memory (GiB)"
 msgstr ""
 
@@ -48694,7 +48698,7 @@ msgid "Must call .new with an options hash."
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:91
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:92
 msgid "Must contain only alphanumeric, hyphen, and underscore characters"
 msgstr ""
 
@@ -51236,7 +51240,7 @@ msgstr ""
 msgid "Not Available"
 msgstr ""
 
-#: ../app/javascript/components/tenant-quota-form/helper.js:86
+#: ../app/javascript/components/tenant-quota-form/helper.js:88
 msgid "Not Enforced"
 msgstr ""
 
@@ -51883,6 +51887,7 @@ msgstr ""
 
 #:
 #: ../app/javascript/components/settings-time-profile-form/settings-time-profile-form.schema.js:161
+#: ../app/javascript/components/tenant-quota-form/helper.js:74
 #: ../app/views/ops/_settings_server_tab.html.haml:103
 msgid "Off"
 msgstr ""
@@ -51913,6 +51918,7 @@ msgstr ""
 
 #:
 #: ../app/javascript/components/settings-time-profile-form/settings-time-profile-form.schema.js:160
+#: ../app/javascript/components/tenant-quota-form/helper.js:75
 #: ../app/views/ops/_settings_server_tab.html.haml:103
 msgid "On"
 msgstr ""
@@ -53371,7 +53377,7 @@ msgid "PID"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:51
+#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:52
 #: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/storage_manager/cloud_volume.rb:107
 msgid "PVM Instance"
 msgstr ""
@@ -55636,7 +55642,7 @@ msgid "Picture|Resource type"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:130
+#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:131
 msgid "Pin Policy"
 msgstr ""
 
@@ -55646,7 +55652,7 @@ msgid "Pin state"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:112
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:113
 msgid "Pinning"
 msgstr ""
 
@@ -62158,6 +62164,10 @@ msgstr ""
 msgid "Resize of VM has been successfully queued."
 msgstr ""
 
+#: ../app/javascript/components/vm-resize-form/vm-resize-form.jsx:49
+msgid "Resize of VM was cancelled by the user"
+msgstr ""
+
 #: ../app/controllers/application_controller/automate.rb:123
 msgid "Resolve"
 msgstr ""
@@ -63425,6 +63435,11 @@ msgstr ""
 #: ../app/helpers/host_initiator_group_helper/textual_summary.rb:38
 #: ../app/helpers/host_initiator_helper/textual_summary.rb:28
 msgid "SAN Addresses"
+msgstr ""
+
+#:
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:45
+msgid "SAP VM resize not supported"
 msgstr ""
 
 #: ../app/helpers/ansible_repository_helper/textual_summary.rb:67
@@ -68431,7 +68446,7 @@ msgid "Size On Disk"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:144
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:145
 msgid "Size must be greater than or equal to .25"
 msgstr ""
 
@@ -68452,7 +68467,7 @@ msgid "Size must be greater than or equal to 10"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:160
+#: ../app/models/manageiq/providers/ibm_cloud/power_virtual_servers/cloud_manager/vm.rb:161
 msgid "Size must be greater than or equal to 2"
 msgstr ""
 
@@ -68819,8 +68834,8 @@ msgid "Software"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:140
 #: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:141
+#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:142
 msgid "Software Licenses"
 msgstr ""
 
@@ -70532,6 +70547,7 @@ msgid "Subtype is required."
 msgstr ""
 
 #: ../app/helpers/textual_mixins/textual_metrics_status.rb:17
+#: ../app/javascript/components/timeline-options/timeline-options.jsx:41
 msgid "Success"
 msgstr ""
 
@@ -77028,7 +77044,7 @@ msgid "VM pinning policy can only be none, soft, or hard"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:131
+#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:132
 msgid "VM pinning policy to use [none, soft, hard]"
 msgstr ""
 
@@ -77683,11 +77699,11 @@ msgstr ""
 msgid "Value missing for %{field}"
 msgstr ""
 
-#: ../app/javascript/components/tenant-quota-form/helper.js:131
+#: ../app/javascript/components/tenant-quota-form/helper.js:133
 msgid "Value must be a positive integer"
 msgstr ""
 
-#: ../app/javascript/components/tenant-quota-form/helper.js:127
+#: ../app/javascript/components/tenant-quota-form/helper.js:129
 msgid "Value must be a positive number"
 msgstr ""
 
@@ -79042,7 +79058,7 @@ msgstr ""
 msgid "Virtual Network"
 msgstr ""
 
-#: ../app/helpers/vm_helper.rb:24
+#: ../app/helpers/vm_helper.rb:26
 msgid "Virtual Private Cloud"
 msgstr ""
 
@@ -83814,7 +83830,7 @@ msgid "unavailable"
 msgstr ""
 
 #:
-#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:55
+#: ../app/models/manageiq/providers/ibm_cloud/inventory/parser/power_virtual_servers.rb:56
 msgid "unknown"
 msgstr ""
 
