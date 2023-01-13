@@ -99,6 +99,40 @@ class EventStream < ApplicationRecord
     return @literal_group_and_level_by_event_type, @regex_group_and_level_by_event_type
   end
 
+  private_class_method def self.event_types_by_group
+    by_literal, by_regex = partition_group_and_level_by_event_type
+
+    literal_event_types_by_group = Hash.new { |h, k| h[k] = [] }
+    regex_event_types_by_group = Hash.new { |h, k| h[k] = [] }
+
+    by_literal.each do |event_type, (group, _level)|
+      literal_event_types_by_group[group] << event_type
+    end
+
+    by_regex.each do |regex, (group, _level)|
+      regex_event_types_by_group[group] << regex
+    end
+
+    return literal_event_types_by_group, regex_event_types_by_group
+  end
+
+  private_class_method def self.event_types_by_level
+    by_literal, by_regex = partition_group_and_level_by_event_type
+
+    literal_event_types_by_level = Hash.new { |h, k| h[k] = [] }
+    regex_event_types_by_level = Hash.new { |h, k| h[k] = [] }
+
+    by_literal.each do |event_type, (_group, level)|
+      literal_event_types_by_level[level] << event_type
+    end
+
+    by_regex.each do |regex, (_group, level)|
+      regex_event_types_by_level[level] << regex
+    end
+
+    return literal_event_types_by_level, regex_event_types_by_level
+  end
+
   def self.clear_event_groups_cache
     @event_groups = @literal_group_and_level_by_event_type = @regex_group_and_level_by_event_type = nil
   end

@@ -33,6 +33,27 @@ class EmsEvent < EventStream
     end
   end
 
+  def self.in_group(group)
+    if group == DEFAULT_GROUP_NAME
+      all
+    else
+      by_literal, by_regex = event_types_by_group
+
+      scope = where(:event_type => by_literal[group])
+      by_regex[group].each do |regex|
+        scope = scope.or(where("event_type ~* ?", regex))
+      end
+    end
+
+    scope
+  end
+
+  def self.with_group_level(group_level)
+  end
+
+  def self.with_group_and_level(group, group_level)
+  end
+
   def handle_event
     EmsEventHelper.new(self).handle
   rescue => err
