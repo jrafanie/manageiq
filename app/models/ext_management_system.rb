@@ -813,6 +813,12 @@ class ExtManagementSystem < ApplicationRecord
     end
   end
 
+  # TODO: refactor these, perhaps into a mixin
+  # Notice, the event_where_clause is basically the same thing.
+  def event_stream_filter
+    {:ems_id => id}
+  end
+
   def event_where_clause(assoc = :ems_events)
     ["#{events_table_name(assoc)}.ems_id = ?", id]
   end

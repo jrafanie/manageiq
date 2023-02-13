@@ -1395,6 +1395,12 @@ class Host < ApplicationRecord
     services.order(:name).uniq.pluck(:name)
   end
 
+  # TODO: refactor these, perhaps into a mixin
+  # Notice, the event_where_clause is basically the same thing.
+  def event_stream_filter
+    {:host_id => id, :dest_host_id => id}
+  end
+
   def event_where_clause(assoc = :ems_events)
     case assoc.to_sym
     when :ems_events, :event_streams
