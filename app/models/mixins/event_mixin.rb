@@ -36,10 +36,30 @@ module EventMixin
     events_assoc_class(assoc).table_name
   end
 
+  def event_stream_filter
+    self.class.event_stream_filter_columns.each_with_object({}) { |col, h| h[col] = id }
+  end
+
   private
 
   def find_one_event(assoc, order)
     ewc = event_where_clause(assoc)
     events_assoc_class(assoc).where(ewc).order(order).first unless ewc.blank?
+  end
+
+  module ClassMethods
+
+    def event_stream_filter_columns
+      @_event_stream_filter_columns ||= begin
+        # Hack. For now, we're removing target_id and returning a single value.
+        # We'll need to figure out how to support multiple columns through the API/UI
+        # with 'or' and 'paren' grouping.
+        ([
+          reflect_on_association(:ems_events).try(:foreign_key),
+          reflect_on_association(:miq_events).try(:foreign_key),
+          reflect_on_association(:policy_events).try(:foreign_key),
+        ].compact.uniq - ["target_id"])[0, 1]
+      end
+    end
   end
 end
