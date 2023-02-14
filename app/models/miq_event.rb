@@ -22,10 +22,6 @@ class MiqEvent < EventStream
 
   CLASS_GROUP_LEVELS = [MiqPolicy::CONDITION_SUCCESS, MiqPolicy::CONDITION_FAILURE].collect { |level| level.downcase.to_sym }
 
-  def self.description
-    _("Management Events")
-  end
-
   def self.class_group_levels
     CLASS_GROUP_LEVELS
   end
@@ -34,13 +30,49 @@ class MiqEvent < EventStream
     _("Policy Events")
   end
 
-  def self.group_names_and_levels
-    hash = default_group_names_and_levels
-    hash[:group_names].merge!(MiqEventDefinitionSet.all.pluck(:name, :description).to_h.symbolize_keys)
-    group_levels.each do |level|
-      hash[:group_levels][level] ||= level.to_s.capitalize
+  def self.group_name(group)
+    return if group.nil?
+
+    group_names_and_levels[:group_names].dig(group.to_sym) || DEFAULT_GROUP_NAME_STR
+  end
+
+  def group
+    group_and_level.first
+  end
+
+  def group_level
+    group_and_level.last
+  end
+
+  DEFAULT_GROUP_NAME     = :other
+  DEFAULT_GROUP_LEVEL    = :success  # change to :detail once the UI fixes success/failure/both
+  DEFAULT_GROUP_NAME_STR = N_("Other")
+
+  def self.group_and_level(event_type)
+    by_literal = partition_group_and_level_by_event_type
+    by_literal[event_type] || [DEFAULT_GROUP_NAME, DEFAULT_GROUP_LEVEL]
+  end
+
+  private_class_method def self.partition_group_and_level_by_event_type
+    return @literal_group_and_level_by_event_type if @literal_group_and_level_by_event_type
+
+    @literal_group_and_level_by_event_type = {}
+
+    @literal_group_and_level_by_event_type = MiqEventDefinition.all.includes(:miq_event_definition_sets, :miq_set_memberships, :miq_sets).each_with_object({}) do |ed, h| 
+      group_name = ed.event_group_name || DEFAULT_GROUP_NAME
+      h[ed.name] = [group_name.to_sym, DEFAULT_GROUP_LEVEL]
     end
-    hash
+  end
+
+  def self.group_names_and_levels
+    @_group_names_and_levels ||= begin
+      hash = default_group_names_and_levels
+      hash[:group_names].merge!(MiqEventDefinitionSet.all.pluck(:name, :description).to_h.symbolize_keys)
+      group_levels.each do |level|
+        hash[:group_levels][level] ||= level.to_s.capitalize
+      end
+      hash
+    end
   end
 
   def self.raise_evm_event(target, raw_event, inputs = {}, options = {})

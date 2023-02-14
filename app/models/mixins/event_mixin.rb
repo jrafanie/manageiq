@@ -36,8 +36,25 @@ module EventMixin
     events_assoc_class(assoc).table_name
   end
 
+  #TODO: Remove me, this is a hack so the UI always calls what I want to call
+  # The UI should call ems_event_filter or miq_event_filter for management events and policy events
   def event_stream_filter
-    self.class.event_stream_filter_columns.each_with_object({}) { |col, h| h[col] = id }
+    miq_event_filter
+  end
+
+  def ems_event_filter
+    { self.class.ems_event_filter_column => id }
+  end
+
+  def miq_event_filter
+    { self.class.miq_event_filter_column => id }
+  end
+
+  def policy_event_filter
+    miq_event_filter
+    # TODO: policy_events are busted.  What we call policy in the ui is miq events and policy_events are not used?
+    # for now, we just do the miq_event_filter
+    # { self.class.policy_event_filter_column => id }
   end
 
   private
@@ -49,17 +66,16 @@ module EventMixin
 
   module ClassMethods
 
-    def event_stream_filter_columns
-      @_event_stream_filter_columns ||= begin
-        # Hack. For now, we're removing target_id and returning a single value.
-        # We'll need to figure out how to support multiple columns through the API/UI
-        # with 'or' and 'paren' grouping.
-        ([
-          reflect_on_association(:ems_events).try(:foreign_key),
-          reflect_on_association(:miq_events).try(:foreign_key),
-          reflect_on_association(:policy_events).try(:foreign_key),
-        ].compact.uniq - ["target_id"])[0, 1]
-      end
+    def ems_event_filter_column
+      @_ems_event_filter_column ||= reflect_on_association(:ems_events).try(:foreign_key) || name.foreign_key
+    end
+
+    def miq_event_filter_column
+      @_miq_event_filter_column ||= reflect_on_association(:miq_events).try(:foreign_key) || "target_id".freeze
+    end
+
+    def policy_event_filter_column
+      @_policy_event_filter_column ||= reflect_on_association(:policy_events).try(:foreign_key) || "target_id".freeze
     end
   end
 end
