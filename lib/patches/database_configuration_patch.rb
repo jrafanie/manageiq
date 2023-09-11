@@ -17,7 +17,7 @@ module DatabaseConfigurationPatch
         # manageiq-gems-pending/gems/pending/util/extensions/miq-yaml
         #
         # rubocop:disable Security/YAMLLoad
-        data = YAML.load(data, aliases: true) || {}
+        data = YAML.load(data) || {}
         # rubocop:enable Security/YAMLLoad
       rescue Psych::SyntaxError => e
         raise "YAML syntax error occurred while parsing #{paths["config/database"].first}. " \
