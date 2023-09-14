@@ -92,6 +92,7 @@ module Vmdb
     # Use yaml_unsafe_load for column serialization to handle Symbols
     config.active_record.use_yaml_unsafe_load = true
 
+    # config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
     # Customize any additional options below...
 
     config.autoload_paths += config.eager_load_paths
