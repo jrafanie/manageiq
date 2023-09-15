@@ -10,3 +10,19 @@ unless ENV['MIQ_QUIET']
     end
   end
 end
+
+
+
+# require 'miq_expression'
+# require 'regexp'
+# require 'ruport'
+
+# MiqExpression, Ruport::Data::Table
+
+    # config.active_record.yaml_column_permitted_classes = [Regexp, Symbol, Time]
+    # config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
+
+
+
+Vmdb::Application.config.active_record.yaml_column_permitted_classes = [MiqExpression, Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
+
