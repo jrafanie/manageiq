@@ -10,7 +10,7 @@ RSpec.describe ActiveRecord::AttributeAccessorThatYamls do
     inst = Vm.new
     inst.access1 = 1
     inst.access2 = 2
-    result = YAML.load(YAML.dump(inst))
+    result = YAML.unsafe_load(YAML.dump(inst))
     expect(result.access1).to eq(1)
     expect(result.access2).to eq(2)
   end
@@ -18,14 +18,14 @@ RSpec.describe ActiveRecord::AttributeAccessorThatYamls do
   it "attr_reader_that_yamls" do
     inst = Vm.new
     inst.instance_variable_set("@read1", 1)
-    result = YAML.load(YAML.dump(inst))
+    result = YAML.unsafe_load(YAML.dump(inst))
     expect(result.read1).to eq(1)
   end
 
   it "attr_writer_that_yamls" do
     inst = Vm.new
     inst.write1 = 1
-    result = YAML.load(YAML.dump(inst))
+    result = YAML.unsafe_load(YAML.dump(inst))
     expect(result.instance_variable_get("@write1")).to eq(1)
   end
 end
