@@ -3,9 +3,14 @@ module YamlLoadAliases
   # Psych 4 aliases load as safe_load.  Some loads happen early, like reading the database.yml so we don't want to load our
   # constants at that time, such as MiqExpression, Ruport, so we have two sets of permitted classes.
   def safe_load(*args, **kwargs)
-    super(*args, **kwargs.merge(:aliases => true, :permitted_classes => DEFAULT_PERMITTED_CLASSES))
-  rescue NameError, Psych::DisallowedClass
-    super(*args, **kwargs.merge(:aliases => true, :permitted_classes => DEFAULT_PERMITTED_CLASSES + [MiqExpression, Ruport::Data::Table]))
+    super(*args, **kwargs.reverse_merge(:aliases => true, :permitted_classes => DEFAULT_PERMITTED_CLASSES))
+  rescue NameError
+    super(*args, **kwargs.reverse_merge(:aliases => true, :permitted_classes => DEFAULT_PERMITTED_CLASSES + [MiqExpression, MiqReport, Ruport::Data::Table, Ruport::Data::Record]))
+  rescue Psych::DisallowedClass
+    # Temporary hack to fallback to psych 3 behavior to go back to unsafe load if it's a disallowed class.
+    # See: https://stackoverflow.com/questions/71191685/visit-psych-nodes-alias-unknown-alias-default-psychbadalias/71192990#71192990
+    # The alternative is to enumerate all the classes we will allow to be loaded from YAML, such as many of the various models.
+    unsafe_load(*args, **kwargs.slice(:filename, :fallback, :symbolize_names, :freeze))
   end
 end
 
