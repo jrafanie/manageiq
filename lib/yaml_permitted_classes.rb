@@ -1,7 +1,7 @@
 class YamlPermittedClasses
-  DEFAULT_PERMITTED_CLASSES = [Object, Regexp, Symbol, Date, Time, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
+  DEFAULT_PERMITTED_CLASSES = [Object, Range, Regexp, Symbol, Date, Time, DateTime, ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
   def self.app_yaml_permitted_classes
-    @app_yaml_permitted_classes ||= DEFAULT_PERMITTED_CLASSES + [MiqExpression, MiqReport, Ruport::Data::Table, Ruport::Data::Record, User]
+    @app_yaml_permitted_classes ||= DEFAULT_PERMITTED_CLASSES + [MiqExpression, MiqReport, Ruport::Data::Table, Ruport::Data::Record, User, ConfigurationScript, ContainerImage, ContainerTemplate, OrchestrationTemplate, ManageIQ::Providers::Vmware::InfraManager, ManageIQ::Providers::InfraManager::Vm]
   end
 
   def self.default_permitted_classes
