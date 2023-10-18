@@ -90,7 +90,10 @@ module Vmdb
     config.action_cable.mount_path = '/ws/notifications'
 
     # Use yaml_unsafe_load for column serialization to handle Symbols
-    config.active_record.use_yaml_unsafe_load = true
+    config.active_record.use_yaml_unsafe_load = false
+
+    require './lib/yaml_permitted_classes'
+    config.active_record.yaml_column_permitted_classes = YamlPermittedClasses::DEFAULT_PERMITTED_CLASSES
 
     # Customize any additional options below...
 
@@ -162,6 +165,10 @@ module Vmdb
     initializer :load_vmdb_settings, :before => :load_config_initializers do
       Vmdb::Settings.init
       Vmdb::Loggers.apply_config(::Settings.log)
+    end
+
+    initializer :populate_app_permitted_classes, :after => :load_config_initializers do
+      YamlPermittedClasses.initialize_app_yaml_permitted_classes
     end
 
     initializer :eager_load_all_the_things, :after => :load_config_initializers do
