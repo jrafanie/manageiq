@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   locale_update_all:
-    if: github.repository_owner == 'ManageIQ'
+    if: github.repository_owner == 'jrafanie'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -42,19 +42,3 @@ jobs:
       run: bundle exec rake evm:db:reset
     - name: Run locale:update_all
       run: bundle exec rake locale:update_all
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        add-paths: |
-          locale/manageiq.pot
-          locale/en/manageiq.po
-        commit-message: Update English Translations ${{github.event.repository.updated_at}}
-        branch: update_english_translations
-        author: ManageIQ Bot <bot@manageiq.org>
-        committer: ManageIQ Bot <bot@manageiq.org>
-        delete-branch: true
-        labels: internationalization
-        push-to-fork: miq-bot/manageiq
-        title: Update English Translations ${{github.event.repository.updated_at}}
-        body: Update the English Translations in the manageiq.po and manageiq.pot files.
-        token: ${{ secrets.PR_TOKEN }}
