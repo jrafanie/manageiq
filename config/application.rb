@@ -92,8 +92,9 @@ module Vmdb
     # Use yaml_unsafe_load for column serialization to handle Symbols
     config.active_record.use_yaml_unsafe_load = false
 
-    require './lib/yaml_permitted_classes'
-    config.active_record.yaml_column_permitted_classes = YamlPermittedClasses::DEFAULT_PERMITTED_CLASSES
+    # cause issues loading rake tasks - temporarily disable it
+    # require './lib/yaml_permitted_classes'
+    # config.active_record.yaml_column_permitted_classes = YamlPermittedClasses::DEFAULT_PERMITTED_CLASSES
 
     # Customize any additional options below...
 
