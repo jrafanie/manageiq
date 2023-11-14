@@ -168,10 +168,6 @@ module Vmdb
       Vmdb::Loggers.apply_config(::Settings.log)
     end
 
-    initializer :populate_app_permitted_classes, :after => :load_config_initializers do
-      YamlPermittedClasses.initialize_app_yaml_permitted_classes
-    end
-
     initializer :eager_load_all_the_things, :after => :load_config_initializers do
       if ENV['DEBUG_MANAGEIQ_ZEITWERK'].present?
         config.eager_load_paths += config.autoload_paths
@@ -185,6 +181,8 @@ module Vmdb
       Vmdb::Initializer.init
       ActiveRecord::Base.connection_pool.release_connection
       puts "** #{Vmdb::Appliance.BANNER}" unless Rails.env.production?
+
+      YamlPermittedClasses.initialize_app_yaml_permitted_classes
     end
 
     console do
