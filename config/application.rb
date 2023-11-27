@@ -90,7 +90,7 @@ module Vmdb
     config.action_cable.mount_path = '/ws/notifications'
 
     # Use yaml_unsafe_load for column serialization to handle Symbols
-    config.active_record.use_yaml_unsafe_load = true
+    config.active_record.use_yaml_unsafe_load = false
 
     # Customize any additional options below...
 
