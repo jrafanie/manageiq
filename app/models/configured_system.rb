@@ -110,3 +110,5 @@ class ConfiguredSystem < ApplicationRecord
     "configured_system"
   end
 end
+
+DescendantLoader.instance.load_subclasses(ConfiguredSystem)

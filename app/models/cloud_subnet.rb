@@ -91,3 +91,5 @@ class CloudSubnet < ApplicationRecord
     extra_attributes[key] if extra_attributes.present?
   end
 end
+
+DescendantLoader.instance.load_subclasses(CloudSubnet)

@@ -117,3 +117,5 @@ class Flavor < ApplicationRecord
     raw_delete_flavor
   end
 end
+
+DescendantLoader.instance.load_subclasses(Flavor)

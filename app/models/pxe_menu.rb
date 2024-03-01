@@ -80,3 +80,5 @@ class PxeMenu < ApplicationRecord
     n_('PXE Menu', 'PXE Menus', number)
   end
 end
+
+DescendantLoader.instance.load_subclasses(PxeMenu)

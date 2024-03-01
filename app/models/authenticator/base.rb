@@ -348,3 +348,5 @@ module Authenticator
     end
   end
 end
+
+DescendantLoader.instance.load_subclasses(Authenticator::Base)
