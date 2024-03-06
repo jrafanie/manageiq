@@ -263,7 +263,7 @@ class DescendantLoader
 
   module ArDescendantsWithLoader
     def descendants
-      if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks].include?(caller_locations.first.base_label)
+      if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks descendants subclasses].include?(caller_locations.first.base_label)
         @loaded_descendants = true
         DescendantLoader.instance.load_subclasses(self)
       end
@@ -275,7 +275,7 @@ class DescendantLoader
     # https://github.com/rails/rails/commit/8f8aa857e084b76b1120edaa9bb9ce03ba1e6a19
     # We need to get in front of it, like we do for descendants.
     def subclasses
-      if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks].include?(caller_locations.first.base_label)
+      if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks descendants subclasses].include?(caller_locations.first.base_label)
         @loaded_descendants = true
         DescendantLoader.instance.load_subclasses(self)
       end
