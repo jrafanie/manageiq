@@ -23,5 +23,3 @@ class PhysicalServerProfile < ApplicationRecord
     ems ? ems.my_zone : MiqServer.my_zone
   end
 end
-
-DescendantLoader.instance.load_subclasses(PhysicalServerProfile)

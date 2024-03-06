@@ -127,5 +127,3 @@ class CloudVolumeSnapshot < ApplicationRecord
     raise NotImplementedError, _("raw_delete_snapshot must be implemented in a subclass")
   end
 end
-
-DescendantLoader.instance.load_subclasses(CloudVolumeSnapshot)

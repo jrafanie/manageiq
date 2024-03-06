@@ -201,5 +201,3 @@ class ResourcePool < ApplicationRecord
     absolute_path_objs(*args).collect(&:name).join("/")
   end
 end
-
-DescendantLoader.instance.load_subclasses(ResourcePool)

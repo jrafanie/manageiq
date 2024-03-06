@@ -1440,5 +1440,3 @@ class Host < ApplicationRecord
     end
   end
 end
-
-DescendantLoader.instance.load_subclasses(Host)

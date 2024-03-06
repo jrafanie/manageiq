@@ -14,5 +14,3 @@ class ResourceGroup < ApplicationRecord
   has_many :network_ports, :dependent => :nullify
   has_many :security_groups, :dependent => :nullify
 end
-
-DescendantLoader.instance.load_subclasses(ResourceGroup)

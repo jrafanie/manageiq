@@ -820,5 +820,3 @@ class Storage < ApplicationRecord
     n_('Datastore', 'Datastores', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(Storage)

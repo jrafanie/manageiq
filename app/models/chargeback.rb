@@ -318,5 +318,3 @@ class Chargeback < ActsAsArModel
     @relevant_fields ||= (@options.report_cols || self.class.report_col_options.keys).to_set
   end
 end # class Chargeback
-
-DescendantLoader.instance.load_subclasses(Chargeback)

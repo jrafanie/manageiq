@@ -13,5 +13,3 @@ class FirmwareBinary < ApplicationRecord
     endpoints.loaded? ? endpoints.map(&:url) : endpoints.pluck(:url)
   end
 end
-
-DescendantLoader.instance.load_subclasses(FirmwareBinary)

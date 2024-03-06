@@ -524,5 +524,3 @@ class Service < ApplicationRecord
     action.nil? ? :automate_timeout : "#{action.downcase}_automate_timeout".to_sym
   end
 end
-
-DescendantLoader.instance.load_subclasses(Service)

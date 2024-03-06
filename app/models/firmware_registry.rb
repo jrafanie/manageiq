@@ -52,5 +52,3 @@ class FirmwareRegistry < ApplicationRecord
     n_('Firmware Registry', 'Firmware Registries', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(FirmwareRegistry)

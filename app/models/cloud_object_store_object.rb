@@ -28,5 +28,3 @@ class CloudObjectStoreObject < ApplicationRecord
     destroy
   end
 end
-
-DescendantLoader.instance.load_subclasses(CloudObjectStoreObject)

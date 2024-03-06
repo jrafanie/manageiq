@@ -72,5 +72,3 @@ class PxeImage < ApplicationRecord
     value.blank? ? options.delete_at(index) : options[index] = "#{key}#{value}"
   end
 end
-
-DescendantLoader.instance.load_subclasses(PxeImage)

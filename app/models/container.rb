@@ -65,5 +65,3 @@ class Container < ApplicationRecord
     save
   end
 end
-
-DescendantLoader.instance.load_subclasses(Container)

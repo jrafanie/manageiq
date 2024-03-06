@@ -268,5 +268,3 @@ class MiqRequestTask < ApplicationRecord
     options[:dialog] || {}
   end
 end
-
-DescendantLoader.instance.load_subclasses(MiqRequestTask)

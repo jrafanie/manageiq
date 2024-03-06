@@ -9,5 +9,3 @@ class ConfigurationOrganization < ApplicationRecord
     (parent.try(:path) || []).push(self)
   end
 end
-
-DescendantLoader.instance.load_subclasses(ConfigurationOrganization)

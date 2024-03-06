@@ -35,5 +35,3 @@ class FileDepot < ApplicationRecord
     uri
   end
 end
-
-DescendantLoader.instance.load_subclasses(FileDepot)

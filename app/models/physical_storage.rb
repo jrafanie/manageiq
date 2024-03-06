@@ -172,5 +172,3 @@ class PhysicalStorage < ApplicationRecord
     end
   end
 end
-
-DescendantLoader.instance.load_subclasses(PhysicalStorage)

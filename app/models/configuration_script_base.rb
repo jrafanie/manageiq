@@ -25,5 +25,3 @@ class ConfigurationScriptBase < ApplicationRecord
   include ProviderObjectMixin
   include SupportsFeatureMixin
 end
-
-DescendantLoader.instance.load_subclasses(ConfigurationScriptBase)

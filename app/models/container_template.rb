@@ -20,5 +20,3 @@ class ContainerTemplate < ApplicationRecord
     raise NotImplementedError, _("instantiate must be implemented in a subclass")
   end
 end
-
-DescendantLoader.instance.load_subclasses(ContainerTemplate)

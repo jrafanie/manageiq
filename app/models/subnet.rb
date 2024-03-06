@@ -5,5 +5,3 @@ class Subnet < ApplicationRecord
 
   belongs_to :lan
 end
-
-DescendantLoader.instance.load_subclasses(Subnet)

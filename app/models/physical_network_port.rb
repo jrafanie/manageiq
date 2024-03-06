@@ -9,5 +9,3 @@ class PhysicalNetworkPort < ApplicationRecord
 
   alias_attribute :name, :port_name
 end
-
-DescendantLoader.instance.load_subclasses(PhysicalNetworkPort)

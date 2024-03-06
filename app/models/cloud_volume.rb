@@ -186,5 +186,3 @@ class CloudVolume < ApplicationRecord
     ext_management_system.class_by_ems(:CloudVolumeSnapshot)&.create_snapshot_queue(userid, self, options)
   end
 end
-
-DescendantLoader.instance.load_subclasses(CloudVolume)

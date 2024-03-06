@@ -34,5 +34,3 @@ class Switch < ApplicationRecord
 
   acts_as_miq_taggable
 end
-
-DescendantLoader.instance.load_subclasses(Switch)

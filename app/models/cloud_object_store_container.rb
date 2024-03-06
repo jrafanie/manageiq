@@ -78,5 +78,3 @@ class CloudObjectStoreContainer < ApplicationRecord
     n_('Cloud Object Store Container', 'Cloud Object Store Containers', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(CloudObjectStoreContainer)

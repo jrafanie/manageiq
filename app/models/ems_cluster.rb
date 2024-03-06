@@ -294,5 +294,3 @@ class EmsCluster < ApplicationRecord
     n_('Cluster', 'Clusters', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(EmsCluster)

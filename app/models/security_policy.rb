@@ -73,5 +73,3 @@ class SecurityPolicy < ApplicationRecord
     n_('Security Policy', 'Security Policies', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(SecurityPolicy)

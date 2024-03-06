@@ -79,5 +79,3 @@ class ConfigurationProfile < ApplicationRecord
     "configuration_profile"
   end
 end
-
-DescendantLoader.instance.load_subclasses(ConfigurationProfile)

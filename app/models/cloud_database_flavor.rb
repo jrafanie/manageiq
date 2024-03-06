@@ -12,5 +12,3 @@ class CloudDatabaseFlavor < ApplicationRecord
 
   scope :active, -> { where(:enabled => true) }
 end
-
-DescendantLoader.instance.load_subclasses(CloudDatabaseFlavor)

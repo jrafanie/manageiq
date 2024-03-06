@@ -96,5 +96,3 @@ class CloudDatabase < ApplicationRecord
     raise NotImplementedError, _("raw_update_cloud_database must be implemented in a subclass")
   end
 end
-
-DescendantLoader.instance.load_subclasses(CloudDatabase)

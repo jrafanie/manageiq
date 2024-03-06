@@ -134,5 +134,3 @@ class ServiceOrder < ApplicationRecord
     miq_requests.destroy_all
   end
 end
-
-DescendantLoader.instance.load_subclasses(ServiceOrder)

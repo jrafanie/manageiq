@@ -16,5 +16,3 @@ class LoadBalancerHealthCheck < ApplicationRecord
 
   virtual_total :total_vms, :vms, :uses => :vms
 end
-
-DescendantLoader.instance.load_subclasses(LoadBalancerHealthCheck)

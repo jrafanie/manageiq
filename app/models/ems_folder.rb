@@ -168,5 +168,3 @@ class EmsFolder < ApplicationRecord
   end
   private_class_method :child_folder_paths_recursive
 end
-
-DescendantLoader.instance.load_subclasses(EmsFolder)

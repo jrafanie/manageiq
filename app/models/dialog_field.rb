@@ -186,5 +186,3 @@ class DialogField < ApplicationRecord
     DynamicDialogFieldValueProcessor.values_from_automate(self)
   end
 end
-
-DescendantLoader.instance.load_subclasses(DialogField)

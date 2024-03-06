@@ -27,5 +27,3 @@ class NetworkService < ApplicationRecord
     n_('Network Service', 'Network Services', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(NetworkService)

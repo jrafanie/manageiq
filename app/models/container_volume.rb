@@ -8,5 +8,3 @@ class ContainerVolume < ApplicationRecord
     n_('Container Volume', 'Container Volumes', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(ContainerVolume)

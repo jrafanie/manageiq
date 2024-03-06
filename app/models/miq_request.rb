@@ -680,5 +680,3 @@ class MiqRequest < ApplicationRecord
     call_automate_event_queue("request_updated")
   end
 end
-
-DescendantLoader.instance.load_subclasses(MiqRequest)

@@ -131,5 +131,3 @@ class StorageService < ApplicationRecord
     MiqTask.generic_action_with_callback(task_opts, queue_opts)
   end
 end
-
-DescendantLoader.instance.load_subclasses(StorageService)

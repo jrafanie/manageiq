@@ -170,5 +170,3 @@ class Snapshot < ApplicationRecord
   end
   private_class_method :normalize_ss_uid
 end
-
-DescendantLoader.instance.load_subclasses(Snapshot)

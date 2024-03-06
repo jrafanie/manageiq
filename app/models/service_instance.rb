@@ -3,5 +3,3 @@ class ServiceInstance < ApplicationRecord
   belongs_to :service_offering
   belongs_to :service_parameters_set
 end
-
-DescendantLoader.instance.load_subclasses(ServiceInstance)

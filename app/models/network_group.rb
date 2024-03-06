@@ -9,5 +9,3 @@ class NetworkGroup < ApplicationRecord
   has_many :network_routers, :dependent => :destroy
   has_many :security_groups, :dependent => :destroy
 end
-
-DescendantLoader.instance.load_subclasses(NetworkGroup)

@@ -13,5 +13,3 @@ class ConfigurationScriptSource < ApplicationRecord
     n_('Repository', 'Repositories', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(ConfigurationScriptSource)

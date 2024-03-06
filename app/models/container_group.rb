@@ -119,5 +119,3 @@ class ContainerGroup < ApplicationRecord
     n_('Pod', 'Pods', number)
   end
 end
-
-DescendantLoader.instance.load_subclasses(ContainerGroup)
