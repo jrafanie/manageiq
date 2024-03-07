@@ -235,7 +235,6 @@ class DescendantLoader
 
     def clear_class_inheritance_relationships
       @class_inheritance_relationships = nil
-      @known_parent_classes = nil
     end
   end
 
@@ -243,21 +242,7 @@ class DescendantLoader
   include Cache
   include Mapper
 
-  def known_parent_class?(parent)
-    known_parent_classes.include?(parent.to_s)
-  end
-
-  def known_children?(parent)
-    class_inheritance_relationships[parent.to_s].length
-  end
-
-  def known_parent_classes
-    @known_parent_classes ||= class_inheritance_relationships.select { |_k, names| names.length > 0 }.collect {|k, _names| k}.to_set
-  end
-
   def load_subclasses(parent)
-    return unless known_parent_class?(parent)
-
     names_to_load = class_inheritance_relationships[parent.to_s].dup
     while (name = names_to_load.shift)
       if (_klass = name.safe_constantize) # this triggers the load
@@ -277,31 +262,26 @@ class DescendantLoader
   end
 
   module ArDescendantsWithLoader
-    # Rails 7 made a change to call descendants on the callback class (self) insead of
-    # the ActiveSupport::DescendantsTracker here:
-    # https://github.com/rails/rails/commit/ffae3bd8d69f9ed1ae185e960d7a38ec17118a4d
-    # def descendants
-    #   if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[__update_callbacks].include?(caller_locations.first.base_label)
-    #     @loaded_descendants = true
-    #     DescendantLoader.instance.load_subclasses(self)
-    #   end
+    def descendants
+      if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks descendants subclasses].include?(caller_locations.first.base_label)
+        @loaded_descendants = true
+        DescendantLoader.instance.load_subclasses(self)
+      end
 
-    #   super
-    # end
+      super
+    end
 
-    # # Rails 6.1 added an alias for subclasss to call direct_descendants in:
-    # # https://github.com/rails/rails/commit/8f8aa857e084b76b1120edaa9bb9ce03ba1e6a19
-    # # We need to get in front of it, like we do for descendants.
-    # # Rails changed in 7.0 to call subclasses from reload_schema_from_cache here:
-    # # https://github.com/rails/rails/commit/6f30cc09a7ad21898d856059e498ab9ad2ae64a4
-    # def subclasses
-    #   if !defined?(@loaded_descendants) && defined?(@schema_loaded) && @schema_loaded
-    #     @loaded_descendants = true
-    #     DescendantLoader.instance.load_subclasses(self)
-    #   end
+    # Rails 6.1 added an alias for subclasss to call direct_descendants in:
+    # https://github.com/rails/rails/commit/8f8aa857e084b76b1120edaa9bb9ce03ba1e6a19
+    # We need to get in front of it, like we do for descendants.
+    def subclasses
+      if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks descendants subclasses].include?(caller_locations.first.base_label)
+        @loaded_descendants = true
+        DescendantLoader.instance.load_subclasses(self)
+      end
 
-    #   super
-    # end
+      super
+    end
   end
 
   module AsDependenciesClearWithLoader
