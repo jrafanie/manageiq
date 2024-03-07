@@ -186,6 +186,21 @@ module Vmdb
       puts "** #{Vmdb::Appliance.BANNER}" unless Rails.env.production?
 
       YamlPermittedClasses.initialize_app_yaml_permitted_classes
+
+      DescendantLoader.instance.known_parent_classes.each do |string_class|
+        begin
+          klass = string_class.constantize
+        rescue NameError
+          # puts string_class
+          # print "F"
+          next
+        else
+          # puts string_class
+          # print "."
+        end
+        DescendantLoader.instance.load_subclasses(klass)
+      end
+      # puts
     end
 
     console do
