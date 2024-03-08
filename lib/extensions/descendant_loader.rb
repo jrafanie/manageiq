@@ -263,7 +263,19 @@ class DescendantLoader
 
   module ArDescendantsWithLoader
     def descendants
+      if Vmdb::Application.instance.initialized?
+        puts "#{name} #{__method__} *** @schema_loaded defined/value: #{defined?(@schema_loaded).inspect} #{@schema_loaded.inspect}/#{self.instance_variable_get(:@schema_loaded)}"
+        puts "#{name} #{__method__} *** self < ActiveRecord::Base: #{(self < ActiveRecord::Base).inspect}"
+        puts "#{name} #{__method__} *** reload_schema_from_cache:  #{caller_locations.first.base_label == 'reload_schema_from_cache'}"
+        puts "#{name} #{__method__} *** __update_callbacks:        #{caller_locations.first.base_label == '__update_callbacks'}"
+        puts "#{name} #{__method__} *** descendants:               #{caller_locations.first.base_label == 'descendants'}"
+        puts "#{name} #{__method__} *** subclasses:                #{caller_locations.first.base_label == 'subclasses'}"
+        puts "#{name} #{__method__} *** calling method:            #{caller_locations.first.base_label}"
+        puts "#{name} #{__method__} *** initialized?:              #{Vmdb::Application.instance.initialized?}"
+      end
+
       if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks descendants subclasses].include?(caller_locations.first.base_label)
+        puts "#{name} #{__method__} *** LOADING SUBCLASSES"
         @loaded_descendants = true
         DescendantLoader.instance.load_subclasses(self)
       end
@@ -275,7 +287,19 @@ class DescendantLoader
     # https://github.com/rails/rails/commit/8f8aa857e084b76b1120edaa9bb9ce03ba1e6a19
     # We need to get in front of it, like we do for descendants.
     def subclasses
+      if Vmdb::Application.instance.initialized?
+        puts "#{name} #{__method__} *** @schema_loaded defined/value: #{defined?(@schema_loaded).inspect} #{@schema_loaded.inspect}/#{self.instance_variable_get(:@schema_loaded)}"
+        puts "#{name} #{__method__} *** self < ActiveRecord::Base: #{(self < ActiveRecord::Base).inspect}"
+        puts "#{name} #{__method__} *** reload_schema_from_cache:  #{caller_locations.first.base_label == 'reload_schema_from_cache'}"
+        puts "#{name} #{__method__} *** __update_callbacks:        #{caller_locations.first.base_label == '__update_callbacks'}"
+        puts "#{name} #{__method__} *** descendants:               #{caller_locations.first.base_label == 'descendants'}"
+        puts "#{name} #{__method__} *** subclasses:                #{caller_locations.first.base_label == 'subclasses'}"
+        puts "#{name} #{__method__} *** calling method:            #{caller_locations.first.base_label}"
+        puts "#{name} #{__method__} *** initialized?:              #{Vmdb::Application.instance.initialized?}"
+      end
+        # if !(self < ActiveRecord::Base)
       if Vmdb::Application.instance.initialized? && !defined?(@loaded_descendants) && !%w[reload_schema_from_cache __update_callbacks descendants subclasses].include?(caller_locations.first.base_label)
+        puts "#{name} #{__method__} *** LOADING SUBCLASSES"
         @loaded_descendants = true
         DescendantLoader.instance.load_subclasses(self)
       end
