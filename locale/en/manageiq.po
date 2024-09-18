@@ -10078,7 +10078,13 @@ msgstr ""
 msgid "ConfigurationScriptBase|Payload"
 msgstr ""
 
+msgid "ConfigurationScriptBase|Payload error"
+msgstr ""
+
 msgid "ConfigurationScriptBase|Payload type"
+msgstr ""
+
+msgid "ConfigurationScriptBase|Payload valid"
 msgstr ""
 
 msgid "ConfigurationScriptBase|Region description"
