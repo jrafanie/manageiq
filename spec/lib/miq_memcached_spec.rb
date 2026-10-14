@@ -13,11 +13,12 @@ RSpec.describe MiqMemcached do
   end
 
   describe ".default_client_options" do
-    it "includes non-default socket and threadsafe options" do
+    it "includes non-default socket, threadsafe, and silence_marshal_warning options" do
       options = described_class.default_client_options
 
       expect(options[:socket_max_failures]).to eq(5)
       expect(options[:threadsafe]).to be(true)
+      expect(options[:silence_marshal_warning]).to be(true)
       expect(options[:ssl_context]).to be_nil
     end
 
